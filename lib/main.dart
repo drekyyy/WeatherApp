@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:l/data/weather_repository.dart';
+import 'package:l/logic/cubit/weather_cubit.dart';
 import 'package:l/presentation/screens/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+  final WeatherRepository weatherRepository = WeatherRepository();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
+    return BlocProvider(
+      create: (context) => WeatherCubit(weatherRepository),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.orange,
+        ),
+        home: const HomeScreen(title: 'Weather App'),
       ),
-      home: const HomeScreen(title: 'Weather App'),
     );
   }
 }

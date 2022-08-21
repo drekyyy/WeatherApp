@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:l/data/weather_model.dart';
+import 'package:l/data/weather_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.title}) : super(key: key);
@@ -24,11 +26,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.only(top: 30),
                     child: Icon(Icons.sunny, size: 200, color: Colors.yellow))),
             Flexible(fit: FlexFit.tight, flex: 3, child: Container(height: 10)),
-            const Flexible(
+            Flexible(
                 flex: 3,
-                child: Text(
-                  'Put your city',
-                )),
+                child: Column(children: [
+                  Text(
+                    'Pogoda w ',
+                  ),
+                  Text('')
+                ])),
           ],
         ),
       ),
