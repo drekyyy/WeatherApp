@@ -25,17 +25,49 @@ class Weather {
   });
 
   factory Weather.fromJson(Map<String, dynamic> json) {
+    //! this json is nested
+    //?instead of creating models for every nest, ive decided to turn every nest into List<String>
+    //then split the string of a given index from the list on ':' because it contains key and value
+    //like a map yet it is a list. then access access the value which always has index 1, e.g {"temp", "267"}
+
+    //example weather: [{id: 802, main: Clouds, description: scattered clouds, icon: 03n}]
+    List<dynamic> weatherDynamicList = json['weather'];
+    List<String> weatherList = weatherDynamicList.toString().split(',');
+
+    //example main: {temp: 289.03, feels_like: 288.71, temp_min: 285.25, temp_max: 291.01, pressure: 1015, humidity: 78}
+    var mainDynamicList = json['main'];
+    List<String> mainList = mainDynamicList.toString().split(',');
+
+    //example wind: {speed: 2.06, deg: 50}
+    var windDynamicList = json['wind'];
+    List<String> windList = (windDynamicList.toString()).split(',');
+    //humidity is the last value of windList, when splitting by ':' it leaves '}' at the end,
+    //so it needs below adjustments
+    String humidityString = mainList[5].split(':')[1].trim();
+    double humidityDouble =
+        double.parse(humidityString.substring(0, humidityString.length - 1));
+
+    double kelvin =
+        272.15; // adjusting from kelvin to celcius (1kelvin=-272.15Celcius degree)
     return Weather(
-      city: json['name'],
-      weather: json['weather.main'],
-      icon: json['weather.icon'],
-      temperature: json['main.temp'],
-      temperatureMin: json['main.temp_min'],
-      temperatureMax: json['main.temp_max'],
-      pressure: json['main.pressure'],
-      windSpeed: json['wind.speed'],
-      humidity: json['main.humidity'],
-    );
+        city: json['name'] ?? '',
+        weather: weatherList[1].split(':')[1].trim(),
+        icon: weatherList[3].split(':')[1].trim(),
+        temperature:
+            (((double.parse(mainList[0].split(':')[1].trim()) - kelvin) * 10)
+                    .roundToDouble()) /
+                10,
+        temperatureMin:
+            (((double.parse(mainList[2].split(':')[1].trim()) - kelvin) * 10)
+                    .roundToDouble()) /
+                10,
+        temperatureMax:
+            (((double.parse(mainList[3].split(':')[1].trim()) - kelvin) * 10)
+                    .roundToDouble()) /
+                10,
+        pressure: double.parse(mainList[4].split(':')[1].trim()),
+        windSpeed: double.parse(windList[0].split(':')[1].trim()),
+        humidity: humidityDouble);
   }
 
   Weather copyWith({
@@ -125,44 +157,3 @@ class Weather {
         humidity.hashCode;
   }
 }
-
-
-
-
-// class Weather {
-//   String city;
-//   String weather;
-//   String icon;
-//   double temperature;
-//   double temperatureMin;
-//   double temperatureMax;
-//   double pressure;
-//   double windSpeed;
-//   double humidity;
-
-//   Weather({
-//     required this.city,
-//     required this.weather,
-//     required this.icon,
-//     required this.temperature,
-//     required this.temperatureMin,
-//     required this.temperatureMax,
-//     required this.pressure,
-//     required this.windSpeed,
-//     required this.humidity,
-//   });
-
-//   factory Weather.fromJson(Map<String, dynamic> json) {
-//     return Weather(
-//       city: json['name'],
-//       weather: json['weather.main'],
-//       icon: json['weather.icon'],
-//       temperature: json['main.temp'],
-//       temperatureMin: json['main.temp_min'],
-//       temperatureMax: json['main.temp_max'],
-//       pressure: json['main.pressure'],
-//       windSpeed: json['wind.speed'],
-//       humidity: json['main.humidity'],
-//     );
-//   }
-// }
