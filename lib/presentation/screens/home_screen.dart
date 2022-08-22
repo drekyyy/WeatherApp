@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:l/data/weather_model.dart';
-import 'package:l/data/weather_repository.dart';
 
 import '../../logic/cubit/weather_cubit.dart';
 
@@ -20,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('home sceen')),
+        title: const Center(child: Text('home sceen')),
       ),
       body: Center(
         child: ListView(
@@ -47,15 +45,31 @@ class _HomeScreenState extends State<HomeScreen> {
                               return 'Enter some text';
                             } else if (value.length < 2) {
                               return 'City name too short';
+                            } else {
+                              return null;
                             }
-                            return null;
                           },
                         ),
+                        BlocBuilder<WeatherCubit, WeatherState>(
+                            builder: (context, state) {
+                          //print('state in homescreen=$state');
+                          if (state is WeatherLoadingFailed) {
+                            return Container(
+                                margin: const EdgeInsets.only(top: 5, left: 1),
+                                child: Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: Text('No such city exists',
+                                        style: TextStyle(
+                                            color: Colors.red.shade700,
+                                            fontSize: 13))));
+                          }
+                          return const SizedBox.shrink();
+                        }),
                         const SizedBox(height: 20),
                         ElevatedButton(
                             onPressed: () {
+                              context.read<WeatherCubit>().emitWeatherInitial();
                               if (_formKey.currentState!.validate()) {
-                                print('miasto= ${cityController.text.trim()}');
                                 context
                                     .read<WeatherCubit>()
                                     .getWeather(cityController.text.trim());
@@ -64,22 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: const Icon(Icons.check))
                       ],
                     ))),
-            // BlocBuilder<WeatherCubit, WeatherState>(builder: (context, state) {
-            //   //ten blocbuilder przesunac na sama gore,
-            //   //jesli state is WeatherInitial, to pokazujemy ekran weatherApp domyslny, z polem do podania miasta itp
-            //   //jesli state is WeatherLoading to pokazujemy loading
-            //   //jesli state is weatherLoaded to pokazujemy ekran pieknie ukazujacy pogode
-
-            //   if (state is WeatherLoaded) {
-            //     return Text(
-            //         'city name: ${state.weather!.city}, temperature: ${state.weather!.temperature.toString()}');
-            //   }
-            //   if (state is WeatherLoading) {
-            //     return Text('Loading...');
-            //   } else {
-            //     return Text('Something is up? neither loading nor loaded');
-            //   }
-            // }
           ],
         ),
       ),
