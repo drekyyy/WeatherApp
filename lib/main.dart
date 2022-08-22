@@ -3,6 +3,7 @@ import 'package:l/data/weather_repository.dart';
 import 'package:l/logic/cubit/weather_cubit.dart';
 import 'package:l/presentation/screens/home_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:l/presentation/screens/wrapper.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.orange,
         ),
-        home: const HomeScreen(title: 'Weather App'),
+        home: Wrapper(),
       ),
     );
   }

@@ -28,7 +28,7 @@ class Weather {
     //! this json is nested
     //?instead of creating models for every nest, ive decided to turn every nest into List<String>
     //then split the string of a given index from the list on ':' because it contains key and value
-    //like a map yet it is a list. then access access the value which always has index 1, e.g {"temp", "267"}
+    //like a map yet it is a list. then access the value which always has index 1, e.g {"temp", "267"}
 
     //example weather: [{id: 802, main: Clouds, description: scattered clouds, icon: 03n}]
     List<dynamic> weatherDynamicList = json['weather'];

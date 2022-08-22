@@ -6,8 +6,7 @@ import 'package:l/data/weather_repository.dart';
 import '../../logic/cubit/weather_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text(widget.title)),
+        title: Center(child: Text('home sceen')),
       ),
       body: Center(
         child: ListView(
@@ -65,17 +64,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: const Icon(Icons.check))
                       ],
                     ))),
-            BlocBuilder<WeatherCubit, WeatherState>(builder: (context, state) {
-              if (state is WeatherLoaded) {
-                return Text(
-                    'city name: ${state.weather.city}, temperature: ${state.weather.temperature.toString()}');
-              }
-              if (state is WeatherLoading) {
-                return Text('Loading...');
-              } else {
-                return Text('Something is up? neither loading nor loaded');
-              }
-            })
+            // BlocBuilder<WeatherCubit, WeatherState>(builder: (context, state) {
+            //   //ten blocbuilder przesunac na sama gore,
+            //   //jesli state is WeatherInitial, to pokazujemy ekran weatherApp domyslny, z polem do podania miasta itp
+            //   //jesli state is WeatherLoading to pokazujemy loading
+            //   //jesli state is weatherLoaded to pokazujemy ekran pieknie ukazujacy pogode
+
+            //   if (state is WeatherLoaded) {
+            //     return Text(
+            //         'city name: ${state.weather!.city}, temperature: ${state.weather!.temperature.toString()}');
+            //   }
+            //   if (state is WeatherLoading) {
+            //     return Text('Loading...');
+            //   } else {
+            //     return Text('Something is up? neither loading nor loaded');
+            //   }
+            // }
           ],
         ),
       ),
