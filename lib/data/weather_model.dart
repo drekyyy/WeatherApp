@@ -3,6 +3,7 @@ import 'dart:convert';
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class Weather {
   String city;
+  String country;
   String weather;
   String icon;
   double temperature;
@@ -14,6 +15,7 @@ class Weather {
 
   Weather({
     required this.city,
+    required this.country,
     required this.weather,
     required this.icon,
     required this.temperature,
@@ -26,52 +28,59 @@ class Weather {
 
   factory Weather.fromJson(Map<String, dynamic> json) {
     //! this json is nested
-    //?instead of creating models for every nest, ive decided to turn every nest into List<String>
-    //then split the string of a given index from the list on ':' because it contains key and value
-    //like a map yet it is a list. then access the value which always has index 1, e.g {"temp", "267"}
+    //?instead of creating models for every nest, ive decided to create a function where
+    //?every nested json is a List<dynamic> which u turn into List<String> by first splitting it on ','
+    //example nested json of weather: [{id: 802, main: Clouds, description: scattered clouds, icon: 03n}]
+    //?then split every List<String> on ':' e.g. {temp: 267} into "{temp" and "267}"
+    //?to get a String containing either key or value
 
-    //example weather: [{id: 802, main: Clouds, description: scattered clouds, icon: 03n}]
-    List<dynamic> weatherDynamicList = json['weather'];
-    List<String> weatherList = weatherDynamicList.toString().split(',');
+    //example nested json of main: {temp: 289.03, feels_like: 288.71, temp_min: 285.25, temp_max: 291.01, pressure: 1015, humidity: 78}
+    //example nested json of wind: {speed: 2.06, deg: 50}
 
-    //example main: {temp: 289.03, feels_like: 288.71, temp_min: 285.25, temp_max: 291.01, pressure: 1015, humidity: 78}
-    var mainDynamicList = json['main'];
-    List<String> mainList = mainDynamicList.toString().split(',');
+    double roundToXth(double value, double x) {
+      //also converting kelvin to Celcius, set kelvin to 0 if u dont want to convert
+      double kelvin = 272.15;
+      return ((value - kelvin) * x).roundToDouble() / x;
+    }
 
-    //example wind: {speed: 2.06, deg: 50}
-    var windDynamicList = json['wind'];
-    List<String> windList = (windDynamicList.toString()).split(',');
-    //humidity is the last value of windList, when splitting by ':' it leaves '}' at the end,
-    //so it needs below adjustments
-    String humidityString = mainList[5].split(':')[1].trim();
-    double humidityDouble =
-        double.parse(humidityString.substring(0, humidityString.length - 1));
+    String getValueFromNestedJson(var jsonDynamicList, String wantedKey) {
+      List<String> list = jsonDynamicList.toString().split(',');
+      for (int i = 0; i < list.length; i++) {
+        String key = list[i].split(':')[0].trim();
+        String value = list[i].split(':')[1].trim();
+        if (key[0] == '{') {
+          key = key.substring(1);
+        }
+        if (value[value.length - 1] == '}') {
+          value = value.substring(0, value.length - 1);
+        }
+        if (key == wantedKey) {
+          return value;
+        }
+      }
+      return '0';
+    }
 
-    double kelvin =
-        272.15; // adjusting from kelvin to celcius (1kelvin=-272.15Celcius degree)
     return Weather(
-        city: json['name'] ?? '',
-        weather: weatherList[1].split(':')[1].trim(),
-        icon: weatherList[3].split(':')[1].trim(),
-        temperature:
-            (((double.parse(mainList[0].split(':')[1].trim()) - kelvin) * 10)
-                    .roundToDouble()) /
-                10,
-        temperatureMin:
-            (((double.parse(mainList[2].split(':')[1].trim()) - kelvin) * 10)
-                    .roundToDouble()) /
-                10,
-        temperatureMax:
-            (((double.parse(mainList[3].split(':')[1].trim()) - kelvin) * 10)
-                    .roundToDouble()) /
-                10,
-        pressure: double.parse(mainList[4].split(':')[1].trim()),
-        windSpeed: double.parse(windList[0].split(':')[1].trim()),
-        humidity: humidityDouble);
+      city: json['name'],
+      country: getValueFromNestedJson(json['sys'], 'country'),
+      weather: getValueFromNestedJson(json['weather'], 'description'),
+      icon: getValueFromNestedJson(json['weather'], 'icon'),
+      temperature: roundToXth(
+          double.parse(getValueFromNestedJson(json['main'], 'temp')), 10),
+      temperatureMin: roundToXth(
+          double.parse(getValueFromNestedJson(json['main'], 'temp_min')), 10),
+      temperatureMax: roundToXth(
+          double.parse(getValueFromNestedJson(json['main'], 'temp_max')), 10),
+      pressure: double.parse(getValueFromNestedJson(json['main'], 'pressure')),
+      windSpeed: double.parse(getValueFromNestedJson(json['wind'], 'speed')),
+      humidity: double.parse(getValueFromNestedJson(json['main'], 'humidity')),
+    );
   }
 
   Weather copyWith({
     String? city,
+    String? country,
     String? weather,
     String? icon,
     double? temperature,
@@ -83,6 +92,7 @@ class Weather {
   }) {
     return Weather(
       city: city ?? this.city,
+      country: country ?? this.country,
       weather: weather ?? this.weather,
       icon: icon ?? this.icon,
       temperature: temperature ?? this.temperature,
@@ -97,6 +107,7 @@ class Weather {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'city': city,
+      'country': country,
       'weather': weather,
       'icon': icon,
       'temperature': temperature,
@@ -111,6 +122,7 @@ class Weather {
   factory Weather.fromMap(Map<String, dynamic> map) {
     return Weather(
       city: map['city'] as String,
+      country: map['country'] as String,
       weather: map['weather'] as String,
       icon: map['icon'] as String,
       temperature: map['temperature'] as double,
@@ -126,7 +138,7 @@ class Weather {
 
   @override
   String toString() {
-    return 'Weather(city: $city, weather: $weather, icon: $icon, temperature: $temperature, temperatureMin: $temperatureMin, temperatureMax: $temperatureMax, pressure: $pressure, windSpeed: $windSpeed, humidity: $humidity)';
+    return 'Weather(city: $city, country: $country, weather: $weather, icon: $icon, temperature: $temperature, temperatureMin: $temperatureMin, temperatureMax: $temperatureMax, pressure: $pressure, windSpeed: $windSpeed, humidity: $humidity)';
   }
 
   @override
@@ -134,6 +146,7 @@ class Weather {
     if (identical(this, other)) return true;
 
     return other.city == city &&
+        other.country == country &&
         other.weather == weather &&
         other.icon == icon &&
         other.temperature == temperature &&
@@ -147,6 +160,7 @@ class Weather {
   @override
   int get hashCode {
     return city.hashCode ^
+        country.hashCode ^
         weather.hashCode ^
         icon.hashCode ^
         temperature.hashCode ^
