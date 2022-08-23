@@ -29,21 +29,54 @@ class WeatherScreen extends StatelessWidget {
             BlocBuilder<WeatherCubit, WeatherState>(
               builder: (context, state) {
                 if (state is WeatherLoaded) {
-                  // return Text(
-                  //   'city name: ${state.weather!.city}, temperature: ${state.weather!.temperature.toString()});
-                  return Column(
-                    children: [
-                      Row(
+                  return Container(
+                      margin: const EdgeInsets.all(20),
+                      child: Column(
                         children: [
                           Text(
-                              '${state.weather!.city}, ${state.weather!.country}'),
-                          const Icon(Icons.cloud)
+                              'fetched at: ${state.weather!.date} your local time',
+                              style: TextStyle(color: Colors.grey)),
+                          const SizedBox(height: 20),
+                          Center(
+                              child: Text(
+                            '${state.weather!.city}, ${state.weather!.country}',
+                            style: const TextStyle(
+                                fontSize: 40, fontWeight: FontWeight.bold),
+                          )),
+                          const SizedBox(height: 40),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.cloud, size: 40),
+                              const SizedBox(width: 10),
+                              Text(
+                                '${state.weather!.temperature}°C',
+                                style: const TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                          Text(
+                              '${state.weather!.temperatureMin}°C  -  ${state.weather!.temperatureMax}°C'),
+                          const SizedBox(height: 20),
+                          Text(state.weather!.weather,
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 20),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                  'Wind: ${state.weather!.windSpeed.toString()}m/s'),
+                              Text(
+                                  'Pressure: ${state.weather!.pressure.toString()}hPa'),
+                              Text(
+                                  'Humidity: ${state.weather!.humidity.toString()}'),
+                              //Text('asd: ${state.weather!.pressure.toString()}')
+                            ],
+                          ),
                         ],
-                      ),
-                      const SizedBox(height: 40),
-                      Text(state.weather!.weather)
-                    ],
-                  );
+                      ));
                 }
                 return const Text(
                     'some error, WeatherState should always be WeatherLoaded on this screen but it isnt?');

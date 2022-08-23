@@ -2,6 +2,7 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class Weather {
+  String date;
   String city;
   String country;
   String weather;
@@ -14,6 +15,7 @@ class Weather {
   double humidity;
 
   Weather({
+    required this.date,
     required this.city,
     required this.country,
     required this.weather,
@@ -61,7 +63,29 @@ class Weather {
       return '0';
     }
 
+    // date with time zone of a place must be done
+    String getDate() {
+      DateTime now = DateTime.now();
+      String month = now.month.toString();
+      String day = now.day.toString();
+      String minute = now.minute.toString();
+      int monthInt = now.month;
+      int dayInt = now.day;
+      int minuteInt = now.minute;
+      if (monthInt < 10) {
+        month = "0$month";
+      }
+      if (dayInt < 10) {
+        day = "0$day";
+      }
+      if (minuteInt < 10) {
+        minute = "0$minute";
+      }
+      return '$month/$day  ${now.hour}:$minute';
+    }
+
     return Weather(
+      date: getDate(),
       city: json['name'],
       country: getValueFromNestedJson(json['sys'], 'country'),
       weather: getValueFromNestedJson(json['weather'], 'description'),
@@ -79,6 +103,7 @@ class Weather {
   }
 
   Weather copyWith({
+    String? date,
     String? city,
     String? country,
     String? weather,
@@ -91,6 +116,7 @@ class Weather {
     double? humidity,
   }) {
     return Weather(
+      date: date ?? this.date,
       city: city ?? this.city,
       country: country ?? this.country,
       weather: weather ?? this.weather,
@@ -106,6 +132,7 @@ class Weather {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'date': date,
       'city': city,
       'country': country,
       'weather': weather,
@@ -121,6 +148,7 @@ class Weather {
 
   factory Weather.fromMap(Map<String, dynamic> map) {
     return Weather(
+      date: map['date'] as String,
       city: map['city'] as String,
       country: map['country'] as String,
       weather: map['weather'] as String,
@@ -138,14 +166,15 @@ class Weather {
 
   @override
   String toString() {
-    return 'Weather(city: $city, country: $country, weather: $weather, icon: $icon, temperature: $temperature, temperatureMin: $temperatureMin, temperatureMax: $temperatureMax, pressure: $pressure, windSpeed: $windSpeed, humidity: $humidity)';
+    return 'Weather(date: $date, city: $city, country: $country, weather: $weather, icon: $icon, temperature: $temperature, temperatureMin: $temperatureMin, temperatureMax: $temperatureMax, pressure: $pressure, windSpeed: $windSpeed, humidity: $humidity)';
   }
 
   @override
   bool operator ==(covariant Weather other) {
     if (identical(this, other)) return true;
 
-    return other.city == city &&
+    return other.date == date &&
+        other.city == city &&
         other.country == country &&
         other.weather == weather &&
         other.icon == icon &&
@@ -159,7 +188,8 @@ class Weather {
 
   @override
   int get hashCode {
-    return city.hashCode ^
+    return date.hashCode ^
+        city.hashCode ^
         country.hashCode ^
         weather.hashCode ^
         icon.hashCode ^
