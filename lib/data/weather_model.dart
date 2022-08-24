@@ -38,7 +38,7 @@ class Weather {
     //?every nested json is a List<dynamic> which u turn into List<String> by first splitting it on ','
     //example nested json of weather: [{id: 802, main: Clouds, description: scattered clouds, icon: 03n}]
     //?then split every List<String> on ':' e.g. {temp: 267} into "{temp" and "267}"
-    //?to get a String containing either key or value
+    //?to get a String containing either key or value (using getValueFromNestedJson function for it)
 
     //example nested json of main: {temp: 289.03, feels_like: 288.71, temp_min: 285.25, temp_max: 291.01, pressure: 1015, humidity: 78}
     //example nested json of wind: {speed: 2.06, deg: 50}
@@ -56,9 +56,13 @@ class Weather {
         String value = list[i].split(':')[1].trim();
         if (key[0] == '{') {
           key = key.substring(1);
+        } else if (key[0] == '[') {
+          key = key.substring(2);
         }
         if (value[value.length - 1] == '}') {
           value = value.substring(0, value.length - 1);
+        } else if (value[value.length - 1] == ']') {
+          value = value.substring(0, value.length - 2);
         }
         if (key == wantedKey) {
           return value;
@@ -69,8 +73,6 @@ class Weather {
 
     print(json);
     String getCityDate() {
-      print(
-          'Datetime= ${DateTime.now()}, datetime utc = ${DateTime.now().toUtc()}');
       DateTime now = DateTime.now();
       DateTime utc = now.toUtc();
       int timezone = json['timezone'] ~/ 3600; // z sekund na godziny

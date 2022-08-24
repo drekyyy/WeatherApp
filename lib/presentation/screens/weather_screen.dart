@@ -18,6 +18,9 @@ class WeatherScreen extends StatelessWidget {
             BlocBuilder<WeatherCubit, WeatherState>(
               builder: (context, state) {
                 if (state is WeatherLoaded) {
+                  print("state.weather!.icon = ${state.weather!.icon}");
+                  print(
+                      "assets/images/state.weather!.icon.png =assets/images/${state.weather!.icon}.png");
                   return Container(
                       margin: const EdgeInsets.all(10),
                       child: Column(
@@ -40,7 +43,12 @@ class WeatherScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.cloud, size: 50),
+                              SizedBox(
+                                  height: 60,
+                                  width: 60,
+                                  child: Image.asset(
+                                    'assets/images/${state.weather!.icon}.png',
+                                  )),
                               const SizedBox(width: 10),
                               Text(
                                 '${state.weather!.temperature}°C',
