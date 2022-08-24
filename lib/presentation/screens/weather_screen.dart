@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:l/logic/cubit/weather_cubit.dart';
+import 'package:weather_app/logic/cubit/weather_cubit.dart';
 
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({Key? key}) : super(key: key);
@@ -30,13 +30,17 @@ class WeatherScreen extends StatelessWidget {
               builder: (context, state) {
                 if (state is WeatherLoaded) {
                   return Container(
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.all(10),
                       child: Column(
                         children: [
                           Text(
-                              'fetched at: ${state.weather!.date} your local time',
-                              style: TextStyle(color: Colors.grey)),
-                          const SizedBox(height: 20),
+                              'fetched at: ${state.weather!.userDate} your local time',
+                              style: const TextStyle(color: Colors.grey)),
+                          const SizedBox(height: 40),
+                          Text(state.weather!.cityDate,
+                              style: const TextStyle(
+                                  fontSize: 17, color: Colors.orange)),
+                          const SizedBox(height: 5),
                           Center(
                               child: Text(
                             '${state.weather!.city}, ${state.weather!.country}',
@@ -47,12 +51,12 @@ class WeatherScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.cloud, size: 40),
+                              const Icon(Icons.cloud, size: 50),
                               const SizedBox(width: 10),
                               Text(
                                 '${state.weather!.temperature}°C',
                                 style: const TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.bold),
+                                    fontSize: 50, fontWeight: FontWeight.bold),
                               )
                             ],
                           ),
@@ -61,17 +65,19 @@ class WeatherScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                           Text(state.weather!.weather,
                               style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                                  fontSize: 25, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 20),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Text(
                                   'Wind: ${state.weather!.windSpeed.toString()}m/s'),
+                              const SizedBox(height: 5),
                               Text(
                                   'Pressure: ${state.weather!.pressure.toString()}hPa'),
+                              const SizedBox(height: 5),
                               Text(
-                                  'Humidity: ${state.weather!.humidity.toString()}'),
+                                  'Humidity: ${state.weather!.humidity.toString()}%'),
                               //Text('asd: ${state.weather!.pressure.toString()}')
                             ],
                           ),

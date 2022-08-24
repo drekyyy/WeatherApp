@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:l/logic/cubit/weather_cubit.dart';
-import 'package:l/presentation/screens/weather_screen.dart';
+import 'package:weather_app/logic/cubit/weather_cubit.dart';
+import 'package:weather_app/presentation/screens/weather_screen.dart';
 
 import 'home_screen.dart';
 import 'loading_screen.dart';

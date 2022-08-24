@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:l/data/weather_data_provider.dart';
-import 'package:l/data/weather_model.dart';
+import 'package:weather_app/data/weather_data_provider.dart';
+import 'package:weather_app/data/weather_model.dart';
 
 class WeatherRepository {
   final WeatherDataProvider weatherAPI;
