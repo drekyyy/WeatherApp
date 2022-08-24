@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
 
+import '../../logic/cubit/internet_cubit.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -18,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text('home sceen')),
+        title: const Center(child: Text('Home')),
       ),
       body: Center(
         child: ListView(

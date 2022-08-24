@@ -6,17 +6,6 @@ import 'package:weather_app/logic/cubit/weather_cubit.dart';
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({Key? key}) : super(key: key);
 
-  // String city;
-  // String country;
-  // String weather;
-  // String icon;
-  // double temperature;
-  // double temperatureMin;
-  // double temperatureMax;
-  // double pressure;
-  // double windSpeed;
-  // double humidity;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +23,7 @@ class WeatherScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                              'fetched at: ${state.weather!.userDate} your local time',
+                              'Fetched on ${state.weather!.userDate} your local time.',
                               style: const TextStyle(color: Colors.grey)),
                           const SizedBox(height: 40),
                           Text(state.weather!.cityDate,
@@ -93,7 +82,7 @@ class WeatherScreen extends StatelessWidget {
                 onPressed: () {
                   context.read<WeatherCubit>().emitWeatherInitial();
                 },
-                child: const Text('Sprawdź inne miasto!'))
+                child: const Text('Check different city!'))
           ],
         )));
   }
