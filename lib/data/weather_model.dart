@@ -82,7 +82,7 @@ class Weather {
 
     String getUserDate() {
       DateTime now = DateTime.now();
-      return DateFormat('M/d  H:m').format(now).toString();
+      return DateFormat('MMMM d, H:mm:ss').format(now).toString();
     }
 
     return Weather(

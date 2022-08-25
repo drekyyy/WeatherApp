@@ -74,9 +74,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (_formKey.currentState!.validate()) {
                                 if (context.read<InternetCubit>().state
                                     is InternetConnected) {
+                                  // context
+                                  //     .read<WeatherCubit>()
+                                  //     .getWeather(cityController.text.trim());
                                   context
                                       .read<WeatherCubit>()
-                                      .getWeather(cityController.text.trim());
+                                      .subscribeToWeatherStream(
+                                          cityController.text.trim());
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

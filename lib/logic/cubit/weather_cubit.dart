@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:weather_app/data/weather_model.dart';
@@ -6,8 +8,52 @@ import 'package:weather_app/data/weather_repository.dart';
 part 'weather_state.dart';
 
 class WeatherCubit extends Cubit<WeatherState> {
-  WeatherCubit(this.repository) : super(WeatherInitial());
+  WeatherCubit(
+    this.repository,
+  ) : super(WeatherInitial());
   final WeatherRepository repository;
+  StreamSubscription? weatherStreamSubscription;
+
+  Stream<dynamic>? getStreamOfWeather(String loc, int sec) {
+    return Stream.periodic(
+      Duration(seconds: sec),
+      (int count) {
+        return repository.getWeatherFromLocation(loc);
+      },
+    );
+  }
+
+  void subscribeToWeatherStream(String loc) async {
+    final _controller = StreamController(
+      onCancel: () => print('Cancelled'),
+      onListen: () => print('Listens'),
+    );
+    //get weather instantly (once), so user isnt stuck in loading screen waiting for the
+    //stream data which can take a bit of time
+    getWeather(loc);
+
+    //update weather every
+    int updateEveryThisManySeconds = 5;
+    _controller.addStream(getStreamOfWeather(loc, updateEveryThisManySeconds)!);
+    weatherStreamSubscription = _controller.stream.listen((event) async {
+      Weather? weather = await Future.value(event);
+      if (weather is Weather) {
+        emitWeatherLoading();
+        emitWeatherLoaded(weather);
+      } else {
+        //technically this state will never occur because we called getWeather()
+        //before which checks for this rule (it emits when the given city doesnt exist)
+        emitWeatherLoadingFailed();
+      }
+    });
+  }
+
+  void unsubscribeWeatherStream() async {
+    if (weatherStreamSubscription != null) {
+      await weatherStreamSubscription!.cancel();
+      emitWeatherInitial();
+    }
+  }
 
   void getWeather(String loc) async {
     emitWeatherLoading();
@@ -15,7 +61,6 @@ class WeatherCubit extends Cubit<WeatherState> {
     if (weather != null) {
       emitWeatherLoaded(weather);
     } else {
-      //emitWeatherInitial();
       emitWeatherLoadingFailed();
     }
   }

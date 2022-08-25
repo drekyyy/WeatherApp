@@ -18,9 +18,6 @@ class WeatherScreen extends StatelessWidget {
             BlocBuilder<WeatherCubit, WeatherState>(
               builder: (context, state) {
                 if (state is WeatherLoaded) {
-                  print("state.weather!.icon = ${state.weather!.icon}");
-                  print(
-                      "assets/images/state.weather!.icon.png =assets/images/${state.weather!.icon}.png");
                   return Container(
                       margin: const EdgeInsets.all(10),
                       child: Column(
@@ -75,20 +72,20 @@ class WeatherScreen extends StatelessWidget {
                               const SizedBox(height: 5),
                               Text(
                                   'Humidity: ${state.weather!.humidity.toString()}%'),
-                              //Text('asd: ${state.weather!.pressure.toString()}')
                             ],
                           ),
                         ],
                       ));
                 }
                 return const Text(
-                    'some error, WeatherState should always be WeatherLoaded on this screen but it isnt?');
+                    'some error, WeatherState should always be WeatherLoaded on this screen but it isnt');
               },
             ),
             const SizedBox(height: 50),
             ElevatedButton(
                 onPressed: () {
-                  context.read<WeatherCubit>().emitWeatherInitial();
+                  context.read<WeatherCubit>().unsubscribeWeatherStream();
+                  //context.read<WeatherCubit>().emitWeatherInitial();
                 },
                 child: const Text('Check different city!'))
           ],
