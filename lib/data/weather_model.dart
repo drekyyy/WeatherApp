@@ -13,9 +13,11 @@ class Weather {
   double temperature;
   double temperatureMin;
   double temperatureMax;
-  double pressure;
+  double temperatureFeelsLike;
+  double visibility;
+  int pressure;
   double windSpeed;
-  double humidity;
+  int humidity;
 
   Weather({
     required this.cityDate,
@@ -27,6 +29,8 @@ class Weather {
     required this.temperature,
     required this.temperatureMin,
     required this.temperatureMax,
+    required this.temperatureFeelsLike,
+    required this.visibility,
     required this.pressure,
     required this.windSpeed,
     required this.humidity,
@@ -59,19 +63,20 @@ class Weather {
         } else if (key[0] == '[') {
           key = key.substring(2);
         }
-        if (value[value.length - 1] == '}') {
-          value = value.substring(0, value.length - 1);
-        } else if (value[value.length - 1] == ']') {
-          value = value.substring(0, value.length - 2);
-        }
+
         if (key == wantedKey) {
+          if (value[value.length - 1] == '}') {
+            value = value.substring(0, value.length - 1);
+          } else if (value[value.length - 1] == ']') {
+            value = value.substring(0, value.length - 2);
+          }
+
           return value;
         }
       }
       return '0';
     }
 
-    print(json);
     String getCityDate() {
       DateTime now = DateTime.now();
       DateTime utc = now.toUtc();
@@ -82,7 +87,13 @@ class Weather {
 
     String getUserDate() {
       DateTime now = DateTime.now();
-      return DateFormat('MMMM d, H:mm:ss').format(now).toString();
+      return DateFormat('MMMM d,  HH:mm:ss').format(now).toString();
+    }
+
+    String getVisibility() {
+      print('visibility json =${json['visibility']}');
+      print('visibility json type =${json['visibility'].runtimeType}');
+      return (json['visibility'] / 1000).toString();
     }
 
     return Weather(
@@ -98,9 +109,12 @@ class Weather {
           double.parse(getValueFromNestedJson(json['main'], 'temp_min')), 10),
       temperatureMax: roundToXth(
           double.parse(getValueFromNestedJson(json['main'], 'temp_max')), 10),
-      pressure: double.parse(getValueFromNestedJson(json['main'], 'pressure')),
+      temperatureFeelsLike: roundToXth(
+          double.parse(getValueFromNestedJson(json['main'], 'feels_like')), 10),
+      visibility: double.parse(getVisibility()),
+      pressure: int.parse(getValueFromNestedJson(json['main'], 'pressure')),
       windSpeed: double.parse(getValueFromNestedJson(json['wind'], 'speed')),
-      humidity: double.parse(getValueFromNestedJson(json['main'], 'humidity')),
+      humidity: int.parse(getValueFromNestedJson(json['main'], 'humidity')),
     );
   }
 
@@ -114,9 +128,11 @@ class Weather {
     double? temperature,
     double? temperatureMin,
     double? temperatureMax,
-    double? pressure,
+    double? temperatureFeelsLike,
+    double? visibility,
+    int? pressure,
     double? windSpeed,
-    double? humidity,
+    int? humidity,
   }) {
     return Weather(
       userDate: userDate ?? this.userDate,
@@ -128,6 +144,8 @@ class Weather {
       temperature: temperature ?? this.temperature,
       temperatureMin: temperatureMin ?? this.temperatureMin,
       temperatureMax: temperatureMax ?? this.temperatureMax,
+      temperatureFeelsLike: temperatureFeelsLike ?? this.temperatureFeelsLike,
+      visibility: visibility ?? this.visibility,
       pressure: pressure ?? this.pressure,
       windSpeed: windSpeed ?? this.windSpeed,
       humidity: humidity ?? this.humidity,
@@ -145,6 +163,8 @@ class Weather {
       'temperature': temperature,
       'temperatureMin': temperatureMin,
       'temperatureMax': temperatureMax,
+      'temperatureFeelsLike': temperatureFeelsLike,
+      'visibility': visibility,
       'pressure': pressure,
       'windSpeed': windSpeed,
       'humidity': humidity,
@@ -162,9 +182,11 @@ class Weather {
       temperature: map['temperature'] as double,
       temperatureMin: map['temperatureMin'] as double,
       temperatureMax: map['temperatureMax'] as double,
-      pressure: map['pressure'] as double,
+      temperatureFeelsLike: map['temperatureFeelsLike'] as double,
+      visibility: map['visibility'] as double,
+      pressure: map['pressure'] as int,
       windSpeed: map['windSpeed'] as double,
-      humidity: map['humidity'] as double,
+      humidity: map['humidity'] as int,
     );
   }
 
@@ -172,7 +194,7 @@ class Weather {
 
   @override
   String toString() {
-    return 'Weather(userDate: $userDate, cityDate: $cityDate, city: $city, country: $country, weather: $weather, icon: $icon, temperature: $temperature, temperatureMin: $temperatureMin, temperatureMax: $temperatureMax, pressure: $pressure, windSpeed: $windSpeed, humidity: $humidity)';
+    return 'Weather(userDate: $userDate, cityDate: $cityDate, city: $city, country: $country, weather: $weather, icon: $icon, temperature: $temperature, temperatureMin: $temperatureMin, temperatureMax: $temperatureMax, temperatureFeelsLike: $temperatureFeelsLike, visibility: $visibility, pressure: $pressure, windSpeed: $windSpeed, humidity: $humidity)';
   }
 
   @override
@@ -188,6 +210,8 @@ class Weather {
         other.temperature == temperature &&
         other.temperatureMin == temperatureMin &&
         other.temperatureMax == temperatureMax &&
+        other.temperatureFeelsLike == temperatureFeelsLike &&
+        other.visibility == visibility &&
         other.pressure == pressure &&
         other.windSpeed == windSpeed &&
         other.humidity == humidity;
@@ -204,6 +228,8 @@ class Weather {
         temperature.hashCode ^
         temperatureMin.hashCode ^
         temperatureMax.hashCode ^
+        temperatureFeelsLike.hashCode ^
+        visibility.hashCode ^
         pressure.hashCode ^
         windSpeed.hashCode ^
         humidity.hashCode;

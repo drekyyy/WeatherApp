@@ -1,14 +1,27 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/data/weather_repository.dart';
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
+import 'package:weather_app/presentation/screens/theme/custom_theme.dart';
 import 'package:weather_app/presentation/screens/wrapper.dart';
 
 import 'data/weather_data_provider.dart';
 import 'logic/cubit/internet_cubit.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarBrightness: Brightness.dark,
+      statusBarColor: Colors.black,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.black,
+      systemNavigationBarContrastEnforced: true,
+      systemNavigationBarDividerColor: Colors.black,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
   WeatherDataProvider weatherAPI = WeatherDataProvider();
   runApp(MyApp(
     weatherRepository: WeatherRepository(weatherAPI),
@@ -17,7 +30,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key, required this.weatherRepository, required this.connectivity})
+  const MyApp(
+      {Key? key, required this.weatherRepository, required this.connectivity})
       : super(key: key);
   final WeatherRepository weatherRepository;
   final Connectivity connectivity;
@@ -34,10 +48,9 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Weather App',
-        theme: ThemeData(
-          primarySwatch: Colors.orange,
-        ),
+        theme: CustomTheme.darkTheme,
         home: const Wrapper(),
       ),
     );

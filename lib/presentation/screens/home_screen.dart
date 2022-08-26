@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
@@ -20,15 +23,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text('Home')),
+        title: const Center(
+            child: Text('Weather App', style: TextStyle(color: Colors.red))),
       ),
       body: Center(
         child: ListView(
           children: <Widget>[
-            const Padding(
-                padding: EdgeInsets.only(top: 30),
-                child: Icon(Icons.sunny, size: 200, color: Colors.yellow)),
-            const SizedBox(height: 40),
+            Padding(
+                padding: const EdgeInsets.only(top: 30),
+                //child: Icon(Icons.sunny, size: 200, color: Colors.yellow)),
+                child: Image.asset('assets/gifs/sun.gif',
+                    height: MediaQuery.of(context).size.height * 0.4)),
             Padding(
                 padding: const EdgeInsets.all(20),
                 child: Form(
@@ -38,10 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         TextFormField(
                           controller: cityController,
                           decoration: const InputDecoration(
-                              labelText: 'City name',
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      width: 3, color: Colors.orange))),
+                            labelText: 'City name',
+                          ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Enter some text';
@@ -67,20 +70,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                           return const SizedBox.shrink();
                         }),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
+                        const SizedBox(height: 50),
+                        FloatingActionButton(
                             onPressed: () {
                               context.read<WeatherCubit>().emitWeatherInitial();
                               if (_formKey.currentState!.validate()) {
                                 if (context.read<InternetCubit>().state
                                     is InternetConnected) {
-                                  // context
-                                  //     .read<WeatherCubit>()
-                                  //     .getWeather(cityController.text.trim());
                                   context
                                       .read<WeatherCubit>()
                                       .subscribeToWeatherStream(
-                                          cityController.text.trim());
+                                          cityController.text.trim(), context);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -89,7 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }
                               }
                             },
-                            child: const Icon(Icons.check))
+                            child: const Icon(
+                                Icons.keyboard_arrow_right_rounded,
+                                size: 40))
                       ],
                     ))),
           ],

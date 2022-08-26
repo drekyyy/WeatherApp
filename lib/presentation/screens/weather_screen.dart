@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
 
+import '../../logic/cubit/internet_cubit.dart';
+
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({Key? key}) : super(key: key);
 
@@ -18,13 +20,21 @@ class WeatherScreen extends StatelessWidget {
             BlocBuilder<WeatherCubit, WeatherState>(
               builder: (context, state) {
                 if (state is WeatherLoaded) {
+                  var internetState = context.watch<InternetCubit>().state;
+                  if (internetState is InternetDisconnected) {
+                    context.read<WeatherCubit>().pauseWeatherStream();
+                  }
+                  if (internetState is InternetConnected) {
+                    context.read<WeatherCubit>().resumeWeatherStream();
+                  }
                   return Container(
                       margin: const EdgeInsets.all(10),
                       child: Column(
                         children: [
                           Text(
                               'Fetched on ${state.weather!.userDate} your local time.',
-                              style: const TextStyle(color: Colors.grey)),
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 11)),
                           const SizedBox(height: 40),
                           Text(state.weather!.cityDate,
                               style: const TextStyle(
@@ -56,22 +66,33 @@ class WeatherScreen extends StatelessWidget {
                           ),
                           Text(
                               '${state.weather!.temperatureMin}°C  -  ${state.weather!.temperatureMax}°C'),
-                          const SizedBox(height: 20),
-                          Text(state.weather!.weather,
+                          const SizedBox(height: 30),
+                          Text(
+                              'Feels like ${state.weather!.temperatureFeelsLike}, ${state.weather!.weather}.',
                               style: const TextStyle(
-                                  fontSize: 25, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 20),
-                          Column(
+                                  fontSize: 17, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 60),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text(
-                                  'Wind: ${state.weather!.windSpeed.toString()}m/s'),
-                              const SizedBox(height: 5),
-                              Text(
-                                  'Pressure: ${state.weather!.pressure.toString()}hPa'),
-                              const SizedBox(height: 5),
-                              Text(
-                                  'Humidity: ${state.weather!.humidity.toString()}%'),
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        'Wind: ${state.weather!.windSpeed.toString()}m/s'),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                        'Humidity: ${state.weather!.humidity.toString()}%'),
+                                  ]),
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        'Pressure: ${state.weather!.pressure.toString()}hPa'),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                        'Visibility: ${state.weather!.visibility.toString()}km')
+                                  ]),
                             ],
                           ),
                         ],
@@ -82,12 +103,11 @@ class WeatherScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 50),
-            ElevatedButton(
+            FloatingActionButton(
                 onPressed: () {
                   context.read<WeatherCubit>().unsubscribeWeatherStream();
-                  //context.read<WeatherCubit>().emitWeatherInitial();
                 },
-                child: const Text('Check different city!'))
+                child: const Icon(Icons.keyboard_arrow_left_rounded, size: 40))
           ],
         )));
   }

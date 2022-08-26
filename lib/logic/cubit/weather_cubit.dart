@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/data/weather_model.dart';
 import 'package:weather_app/data/weather_repository.dart';
+
+import 'internet_cubit.dart';
 
 part 'weather_state.dart';
 
@@ -23,17 +27,19 @@ class WeatherCubit extends Cubit<WeatherState> {
     );
   }
 
-  void subscribeToWeatherStream(String loc) async {
+  void subscribeToWeatherStream(String loc, BuildContext context) async {
+    isStreamPaused = false;
     final _controller = StreamController(
       onCancel: () => print('Cancelled'),
       onListen: () => print('Listens'),
     );
+
     //get weather instantly (once), so user isnt stuck in loading screen waiting for the
     //stream data which can take a bit of time
     getWeather(loc);
 
     //update weather every
-    int updateEveryThisManySeconds = 5;
+    int updateEveryThisManySeconds = 30;
     _controller.addStream(getStreamOfWeather(loc, updateEveryThisManySeconds)!);
     weatherStreamSubscription = _controller.stream.listen((event) async {
       Weather? weather = await Future.value(event);
@@ -46,6 +52,22 @@ class WeatherCubit extends Cubit<WeatherState> {
         emitWeatherLoadingFailed();
       }
     });
+  }
+
+  bool? isStreamPaused;
+  void pauseWeatherStream() {
+    if (isStreamPaused == false) {
+      weatherStreamSubscription?.pause();
+      isStreamPaused = true;
+    }
+  }
+
+  void resumeWeatherStream() async {
+    await Future.delayed(const Duration(seconds: 5));
+    if (isStreamPaused == true) {
+      weatherStreamSubscription?.resume();
+      isStreamPaused = false;
+    }
   }
 
   void unsubscribeWeatherStream() async {

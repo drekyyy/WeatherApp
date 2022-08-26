@@ -9,6 +9,8 @@ class LoadingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
         body: SafeArea(
-            child: Center(child: SpinKitCircle(color: Colors.orange))));
+            child: Center(
+                child: SpinKitCircle(
+                    size: 100, color: Color.fromRGBO(239, 108, 0, 1)))));
   }
 }
