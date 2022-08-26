@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/logic/cubit/weather_cubit.dart';
 
+import 'package:weather_app/logic/cubit/weather_cubit.dart';
 import '../../logic/cubit/internet_cubit.dart';
 
 class WeatherScreen extends StatelessWidget {
@@ -15,7 +14,7 @@ class WeatherScreen extends StatelessWidget {
           title: const Center(child: Text('weather loaded')),
         ),
         body: Center(
-            child: Column(
+            child: ListView(
           children: [
             BlocBuilder<WeatherCubit, WeatherState>(
               builder: (context, state) {
@@ -38,7 +37,8 @@ class WeatherScreen extends StatelessWidget {
                           const SizedBox(height: 40),
                           Text(state.weather!.cityDate,
                               style: const TextStyle(
-                                  fontSize: 17, color: Colors.orange)),
+                                  fontSize: 17,
+                                  color: Color.fromRGBO(239, 108, 0, 1))),
                           const SizedBox(height: 5),
                           Center(
                               child: Text(
@@ -68,7 +68,7 @@ class WeatherScreen extends StatelessWidget {
                               '${state.weather!.temperatureMin}°C  -  ${state.weather!.temperatureMax}°C'),
                           const SizedBox(height: 30),
                           Text(
-                              'Feels like ${state.weather!.temperatureFeelsLike}, ${state.weather!.weather}.',
+                              'Feels like ${state.weather!.temperatureFeelsLike}°C, ${state.weather!.weather}.',
                               style: const TextStyle(
                                   fontSize: 17, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 60),

@@ -13,13 +13,11 @@ import 'logic/cubit/internet_cubit.dart';
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarBrightness: Brightness.dark,
       statusBarColor: Colors.black,
-      statusBarIconBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light,
       systemNavigationBarColor: Colors.black,
-      systemNavigationBarContrastEnforced: true,
       systemNavigationBarDividerColor: Colors.black,
-      systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
   WeatherDataProvider weatherAPI = WeatherDataProvider();
@@ -44,6 +42,7 @@ class MyApp extends StatelessWidget {
           create: (context) => WeatherCubit(weatherRepository),
         ),
         BlocProvider<InternetCubit>(
+          lazy: false,
           create: (context) => InternetCubit(connectivity: connectivity),
         ),
       ],

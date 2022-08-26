@@ -7,8 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/data/weather_model.dart';
 import 'package:weather_app/data/weather_repository.dart';
 
-import 'internet_cubit.dart';
-
 part 'weather_state.dart';
 
 class WeatherCubit extends Cubit<WeatherState> {
@@ -33,18 +31,18 @@ class WeatherCubit extends Cubit<WeatherState> {
       onCancel: () => print('Cancelled'),
       onListen: () => print('Listens'),
     );
-
+    //emitWeatherLoading();
     //get weather instantly (once), so user isnt stuck in loading screen waiting for the
     //stream data which can take a bit of time
     getWeather(loc);
 
     //update weather every
-    int updateEveryThisManySeconds = 30;
+    int updateEveryThisManySeconds = 60;
     _controller.addStream(getStreamOfWeather(loc, updateEveryThisManySeconds)!);
     weatherStreamSubscription = _controller.stream.listen((event) async {
       Weather? weather = await Future.value(event);
       if (weather is Weather) {
-        emitWeatherLoading();
+        // emitWeatherLoading();
         emitWeatherLoaded(weather);
       } else {
         //technically this state will never occur because we called getWeather()

@@ -91,8 +91,6 @@ class Weather {
     }
 
     String getVisibility() {
-      print('visibility json =${json['visibility']}');
-      print('visibility json type =${json['visibility'].runtimeType}');
       return (json['visibility'] / 1000).toString();
     }
 
