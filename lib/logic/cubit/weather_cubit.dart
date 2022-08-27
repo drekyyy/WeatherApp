@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/data/city_model.dart';
 import 'package:weather_app/data/weather_model.dart';
 import 'package:weather_app/data/weather_repository.dart';
 
@@ -25,7 +26,7 @@ class WeatherCubit extends Cubit<WeatherState> {
     );
   }
 
-  void subscribeToWeatherStream(String loc, BuildContext context) async {
+  void subscribeToWeatherStream(String loc) async {
     isStreamPaused = false;
     final _controller = StreamController(
       onCancel: () => print('Cancelled'),
@@ -42,7 +43,6 @@ class WeatherCubit extends Cubit<WeatherState> {
     weatherStreamSubscription = _controller.stream.listen((event) async {
       Weather? weather = await Future.value(event);
       if (weather is Weather) {
-        // emitWeatherLoading();
         emitWeatherLoaded(weather);
       } else {
         //technically this state will never occur because we called getWeather()
@@ -78,6 +78,7 @@ class WeatherCubit extends Cubit<WeatherState> {
   void getWeather(String loc) async {
     emitWeatherLoading();
     final Weather? weather = await repository.getWeatherFromLocation(loc);
+    print('weather= $weather');
     if (weather != null) {
       emitWeatherLoaded(weather);
     } else {

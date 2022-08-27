@@ -8,6 +8,7 @@ import 'package:weather_app/presentation/screens/theme/custom_theme.dart';
 import 'package:weather_app/presentation/screens/wrapper.dart';
 
 import 'data/weather_data_provider.dart';
+import 'logic/bloc/search_bloc.dart';
 import 'logic/cubit/internet_cubit.dart';
 
 void main() {
@@ -45,6 +46,9 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (context) => InternetCubit(connectivity: connectivity),
         ),
+        BlocProvider<SearchBloc>(
+          create: (context) => SearchBloc(weatherRepository),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

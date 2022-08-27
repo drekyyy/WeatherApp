@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/logic/bloc/search_bloc.dart';
 
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
 import '../../logic/cubit/internet_cubit.dart';
@@ -69,14 +70,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 50),
                         FloatingActionButton(
                             onPressed: () {
-                              context.read<WeatherCubit>().emitWeatherInitial();
+                              context
+                                  .read<WeatherCubit>()
+                                  .emitWeatherInitial(); // emit to clear msg of weatherloadingfailed state
                               if (_formKey.currentState!.validate()) {
                                 if (context.read<InternetCubit>().state
                                     is InternetConnected) {
                                   context
                                       .read<WeatherCubit>()
                                       .subscribeToWeatherStream(
-                                          cityController.text.trim(), context);
+                                          cityController.text.trim());
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -87,9 +90,30 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: const Icon(
                                 Icons.keyboard_arrow_right_rounded,
-                                size: 40))
+                                size: 40)),
+                        FloatingActionButton(onPressed: () {
+                          //context.read<SearchBloc>().getCities('las');
+                          context.read<SearchBloc>().add(ShowResult());
+                        }),
                       ],
                     ))),
+            BlocBuilder<SearchBloc, SearchState>(
+              builder: (context, state) {
+                if (state is SearchShow) {
+                  int length = state.cities!.length;
+                  print('cities length in homes creen= $length');
+                  return ListView.builder(
+                      itemCount: length,
+                      itemExtent: 80,
+                      itemBuilder: (context, index) {
+                        //  Map<String, dynamic> map=state.cities[index];
+                        return ListTile(leading: state.cities![index]['name']);
+                      });
+                } else {
+                  return const Text('empty');
+                }
+              },
+            )
           ],
         ),
       ),
