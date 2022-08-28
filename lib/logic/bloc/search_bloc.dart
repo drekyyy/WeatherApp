@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:weather_app/data/city_model.dart';
+import 'package:weather_app/data/locations_model.dart';
 import 'package:weather_app/data/weather_repository.dart';
 
 part 'search_event.dart';
@@ -10,20 +10,31 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final WeatherRepository repository;
 
   SearchBloc(this.repository) : super(SearchInitial()) {
-    on<ShowResult>((event, emit) async {
-      Cities? cities = await Future.value(getCities('las'));
-      print('cities inside searchBloc event showresult= $cities');
-      if (cities is Cities) {
-        print('does it work???');
-        emitSearchShow(cities);
-      }
-      // TODO: implement event handler
+    on<SearchSuggestionsDisplayed>((event, emit) async {
+      if (event.loc != null) {
+        // if (event.locLength! > 2) {
+        Locations? locations = await Future.value(getCities(event.loc!));
+        print('cities inside searchBloc event showresult= $locations');
+        if (locations is Locations) {
+          // print('does it work???');
+          emitSearchSuggestions(locations);
+        }
+        // }
+      } //else emitSearchShowValidation('Location field empty.');
+    });
+    on<SearchValueUpdated>((event, emit) async {
+      await Future.delayed(const Duration(milliseconds: 500));
+      emitSearchValueStorage(event.loc);
     });
   }
-  Future<Cities?> getCities(String loc) async {
-    final Cities? cities = await repository.getCitiesFromLocation(loc);
-    return cities;
+  Future<Locations?> getCities(String loc) async {
+    final Locations? locations = await repository.getCitiesFromLocation(loc);
+    return locations;
   }
 
-  void emitSearchShow(Cities cities) => emit(SearchShow(cities));
+  void emitSearchSuggestions(Locations locations) =>
+      emit(SearchSuggestions(locations));
+  void emitSearchValidation(String message) => emit(SearchValidation(message));
+  void emitSearchValueStorage(String? searchValue) =>
+      emit(SearchValueStorage(searchValue));
 }

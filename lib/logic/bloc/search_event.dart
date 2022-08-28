@@ -7,4 +7,13 @@ abstract class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ShowResult extends SearchEvent {}
+class SearchSuggestionsDisplayed extends SearchEvent {
+  String? loc;
+  SearchSuggestionsDisplayed(this.loc);
+  int? get locLength => loc!.length;
+}
+
+class SearchValueUpdated extends SearchEvent {
+  String? loc;
+  SearchValueUpdated(this.loc);
+}
