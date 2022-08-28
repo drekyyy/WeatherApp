@@ -10,21 +10,21 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final WeatherRepository repository;
 
   SearchBloc(this.repository) : super(SearchInitial()) {
-    on<SearchSuggestionsDisplayed>((event, emit) async {
-      if (event.loc != null) {
-        // if (event.locLength! > 2) {
-        Locations? locations = await Future.value(getCities(event.loc!));
-        print('cities inside searchBloc event showresult= $locations');
-        if (locations is Locations) {
-          // print('does it work???');
-          emitSearchSuggestions(locations);
-        }
-        // }
-      } //else emitSearchShowValidation('Location field empty.');
-    });
     on<SearchValueUpdated>((event, emit) async {
-      await Future.delayed(const Duration(milliseconds: 500));
-      emitSearchValueStorage(event.loc);
+      //checking if given seach value isnt empty
+      if (event.value != null) {
+        emitSearchWithValue(event.value);
+        //checking if its longer than 2 and if it only contains alphabetic characters
+        if (event.valueLength! > 2 &&
+            event.value!.contains(RegExp('^[a-zA-Z]+'))) {
+          Locations? locations = await Future.value(getCities(event.value!));
+          if (locations is Locations) {
+            emitSearchSuggestionsLoaded(locations);
+          }
+        }
+      } else {
+        emitSearchInitial();
+      }
     });
   }
   Future<Locations?> getCities(String loc) async {
@@ -32,9 +32,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     return locations;
   }
 
-  void emitSearchSuggestions(Locations locations) =>
-      emit(SearchSuggestions(locations));
-  void emitSearchValidation(String message) => emit(SearchValidation(message));
-  void emitSearchValueStorage(String? searchValue) =>
-      emit(SearchValueStorage(searchValue));
+  void emitSearchSuggestionsLoaded(Locations locations) =>
+      emit(SearchSuggestionsLoaded(locations));
+  //void emitSearchValidation(String message) => emit(SearchValidation(message));
+  void emitSearchWithValue(String? searchValue) =>
+      emit(SearchWithValue(searchValue));
+  void emitSearchInitial() => emit(SearchInitial());
 }

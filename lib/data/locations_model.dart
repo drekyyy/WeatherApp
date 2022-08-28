@@ -29,17 +29,23 @@ class Locations {
     //this var is always List<dynamic>?
     List<Map<String, dynamic>>? getValueFromNestedJson(var jsonDynamicList) {
       //each json[i] is a Map<String, dynamic>, so we add them all to the list
+
       // we create this list just to get length of json (how many nexted json there are)
       List<String> list = jsonDynamicList.toString().split('}, {');
-      print('list.length= ${list.length}');
-      print('json heheh= $json'); // <- json is empty, need to fix it
-      List<Map<String, dynamic>>? listOfMaps = [];
-      for (int i = 0; i < list.length; i++) {
-        print('${jsonDynamicList[i]}');
-        // if (jsonDynamicList[i])
-        listOfMaps.add(jsonDynamicList[i]);
-      }
 
+      List<Map<String, dynamic>>? listOfMaps = [];
+      Set<String> setofLocations = {};
+      for (int i = 0; i < list.length; i++) {
+        int setLengthBefore = setofLocations.length;
+        //set doesnt store the same values, i dont want duplicates that have the same name and state
+        //(it sometimes shows the same location but with slightly different coordinates) hance this method is used
+        setofLocations
+            .add('${jsonDynamicList[i]['name']}${jsonDynamicList[i]['state']}');
+        int setLengthAfter = setofLocations.length;
+        if (setLengthAfter == setLengthBefore + 1) {
+          listOfMaps.add(jsonDynamicList[i]);
+        }
+      }
       return listOfMaps;
     }
 

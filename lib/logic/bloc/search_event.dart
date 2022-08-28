@@ -7,13 +7,9 @@ abstract class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class SearchSuggestionsDisplayed extends SearchEvent {
-  String? loc;
-  SearchSuggestionsDisplayed(this.loc);
-  int? get locLength => loc!.length;
-}
-
 class SearchValueUpdated extends SearchEvent {
-  String? loc;
-  SearchValueUpdated(this.loc);
+  final String? value;
+  const SearchValueUpdated(this.value);
+
+  int? get valueLength => value!.length;
 }

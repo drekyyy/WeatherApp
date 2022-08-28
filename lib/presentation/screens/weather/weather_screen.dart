@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
-import '../../logic/cubit/internet_cubit.dart';
+import '../../../logic/cubit/internet_cubit.dart';
 
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({Key? key}) : super(key: key);
@@ -54,7 +54,7 @@ class WeatherScreen extends StatelessWidget {
                                   height: 60,
                                   width: 60,
                                   child: Image.asset(
-                                    'assets/images/${state.weather!.icon}.png',
+                                    'assets/images/weather/${state.weather!.icon}.png',
                                   )),
                               const SizedBox(width: 10),
                               Text(

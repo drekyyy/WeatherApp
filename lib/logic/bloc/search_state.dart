@@ -9,29 +9,27 @@ abstract class SearchState extends Equatable {
 
 class SearchInitial extends SearchState {}
 
-class SearchSuggestions extends SearchState {
+class SearchWithValue extends SearchState {
+  final String? value;
+  const SearchWithValue(this.value);
+
+  @override
+  List<Object> get props => [value!];
+}
+
+class SearchSuggestionsLoaded extends SearchState {
   final Locations? locations;
-  const SearchSuggestions(this.locations);
+  const SearchSuggestionsLoaded(this.locations);
   @override
   List<Object> get props => [locations!];
 }
 
-class SearchValidation extends SearchState {
-  final String message;
-  const SearchValidation(this.message);
+// class SearchValidation extends SearchState {//changet o SearchLoadfailed?
+//   final String message;
+//   const SearchValidation(this.message);
 
-  @override
-  List<Object> get props => [message];
-}
+//   @override
+//   List<Object> get props => [message];
+// }
 
-class SearchValueStorage extends SearchState {
-  final String? searchValue;
-  const SearchValueStorage(this.searchValue);
 
-  String? get valuee {
-    return searchValue;
-  }
-
-  @override
-  List<Object> get props => [searchValue!];
-}

@@ -4,8 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/data/weather_repository.dart';
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
-import 'package:weather_app/presentation/screens/theme/custom_theme.dart';
+
 import 'package:weather_app/presentation/screens/wrapper.dart';
+import 'package:weather_app/presentation/theme/custom_theme.dart';
 
 import 'data/weather_data_provider.dart';
 import 'logic/bloc/search_bloc.dart';

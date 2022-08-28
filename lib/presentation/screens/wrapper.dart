@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
-import 'package:weather_app/presentation/screens/weather_screen.dart';
-import 'home_screen.dart';
-import 'loading_screen.dart';
+import 'package:weather_app/presentation/screens/weather/weather_screen.dart';
+import 'home/home_screen.dart';
+import 'loading/loading_screen.dart';
 
 class Wrapper extends StatefulWidget {
   const Wrapper({Key? key}) : super(key: key);

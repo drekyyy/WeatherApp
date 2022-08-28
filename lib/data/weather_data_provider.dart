@@ -10,7 +10,7 @@ class WeatherDataProvider {
 
   Future<http.Response> fetchCities(String city) {
     return http.get(Uri.parse(
-        'http://api.openweathermap.org/geo/1.0/direct?q=$city&limit=5&appid=$_weatherAPIkey'));
+        'http://api.openweathermap.org/geo/1.0/direct?q=$city&limit=10&appid=$_weatherAPIkey'));
   }
 }
 

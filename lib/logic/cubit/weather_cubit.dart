@@ -32,7 +32,6 @@ class WeatherCubit extends Cubit<WeatherState> {
       onCancel: () => print('Cancelled'),
       onListen: () => print('Listens'),
     );
-    //emitWeatherLoading();
     //get weather instantly (once), so user isnt stuck in loading screen waiting for the
     //stream data which can take a bit of time
     getWeather(loc);
