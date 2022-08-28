@@ -15,27 +15,32 @@ class SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String val = '';
+    TextEditingController textController = TextEditingController();
     return Container(
         margin: const EdgeInsets.only(left: 15, right: 15),
         child: Column(children: [
           TextField(
+            controller: textController,
             decoration: InputDecoration(
                 suffixIcon: IconButton(
                     color: Colors.orange[600],
                     onPressed: () {
-                      if (val.length > 2) {
-                        var internetState = context.read<InternetCubit>().state;
-                        if (internetState is InternetConnected) {
+                      var internetState = context.read<InternetCubit>().state;
+
+                      if (internetState is InternetConnected) {
+                        if (textController.text.length > 2) {
+                          context.read<WeatherCubit>().subscribeToWeatherStream(
+                              textController.text.trim());
+                        } else {
                           context
                               .read<WeatherCubit>()
-                              .subscribeToWeatherStream(val.trim());
+                              .emitWeatherValidationFailed(
+                                  'City name too short!');
                         }
                       } else {
-                        context
-                            .read<WeatherCubit>()
-                            .emitWeatherValidationFailed(
-                                'City name too short!');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('No internet connection!')));
                       }
                     },
                     icon: const Icon(
@@ -43,18 +48,18 @@ class SearchBar extends StatelessWidget {
                       size: 30,
                     ))),
             onChanged: (String value) async {
-              val = value;
               await Future.delayed(const Duration(milliseconds: 100));
 
               if (!mounted) {
                 return;
               } //need to make sure that widget is mounted if we want to use context after async
               var weatherState = context.read<WeatherCubit>().state;
-              print('weatherState = $weatherState');
+
               if (weatherState is WeatherValidationFailed) {
                 context.read<WeatherCubit>().emitWeatherInitial();
               }
-              if (value.isNotEmpty) {
+              var internetState = context.read<InternetCubit>().state;
+              if (value.isNotEmpty && internetState is InternetConnected) {
                 context
                     .read<SearchBloc>()
                     .add(SearchValueUpdated(value.trim()));
@@ -66,7 +71,6 @@ class SearchBar extends StatelessWidget {
           BlocBuilder<WeatherCubit, WeatherState>(
             builder: (context, state) {
               if (state is WeatherValidationFailed) {
-                print(state);
                 return Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(state.message,

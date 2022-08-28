@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'weather_cubit.dart';
 
 class WeatherState extends Equatable {
@@ -16,11 +17,18 @@ class WeatherLoaded extends WeatherState {
   const WeatherLoaded(this.weather);
   @override
   List<Object> get props => [weather!];
+
+  @override
+  String toString() => 'WeatherLoaded(weather: $weather)';
 }
 
 class WeatherValidationFailed extends WeatherState {
-  String message;
-  WeatherValidationFailed(this.message);
+  final String message;
+  const WeatherValidationFailed(this.message);
+
   @override
   List<Object> get props => [message];
+
+  @override
+  String toString() => 'WeatherValidationFailed(message: $message)';
 }

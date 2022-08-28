@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/logic/bloc/search_bloc.dart';
+import 'package:weather_app/logic/cubit/internet_cubit.dart';
+import 'package:weather_app/logic/cubit/weather_cubit.dart';
 
 class SearchSuggestions extends StatelessWidget {
   const SearchSuggestions({Key? key}) : super(key: key);
@@ -9,11 +11,13 @@ class SearchSuggestions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(builder: ((context, state) {
-      if (state is SearchWithValue) {
+      var internetState = context.watch<InternetCubit>().state;
+      if (state is SearchWithValue && internetState is InternetConnected) {
         String? searchValue = state.value;
-        context.read<SearchBloc>().add(SearchValueUpdated(searchValue));
       }
-      if (state is SearchSuggestionsLoaded) {
+
+      if (state is SearchSuggestionsLoaded &&
+          internetState is InternetConnected) {
         int length = state.locations!.length;
         return ListView.builder(
             shrinkWrap: true,
@@ -33,6 +37,9 @@ class SearchSuggestions extends StatelessWidget {
                   style: const TextStyle(fontSize: 11),
                   overflow: TextOverflow.ellipsis,
                 ),
+                onTap: () {
+                  context.read<WeatherCubit>().subscribeToWeatherStream('');
+                },
               );
             });
       }

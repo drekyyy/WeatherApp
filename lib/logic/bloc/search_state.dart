@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'search_bloc.dart';
 
 abstract class SearchState extends Equatable {
@@ -12,9 +13,11 @@ class SearchInitial extends SearchState {}
 class SearchWithValue extends SearchState {
   final String? value;
   const SearchWithValue(this.value);
-
   @override
   List<Object> get props => [value!];
+
+  @override
+  String toString() => 'SearchWithValue(value: $value)';
 }
 
 class SearchSuggestionsLoaded extends SearchState {
@@ -22,6 +25,9 @@ class SearchSuggestionsLoaded extends SearchState {
   const SearchSuggestionsLoaded(this.locations);
   @override
   List<Object> get props => [locations!];
+
+  @override
+  String toString() => 'SearchSuggestionsLoaded(locations: $locations)';
 }
 
 // class SearchValidation extends SearchState {//changet o SearchLoadfailed?

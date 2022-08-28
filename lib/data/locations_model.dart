@@ -39,8 +39,8 @@ class Locations {
         int setLengthBefore = setofLocations.length;
         //set doesnt store the same values, i dont want duplicates that have the same name and state
         //(it sometimes shows the same location but with slightly different coordinates) hance this method is used
-        setofLocations
-            .add('${jsonDynamicList[i]['name']}${jsonDynamicList[i]['state']}');
+        setofLocations.add(
+            '${jsonDynamicList[i]['country']}${jsonDynamicList[i]['state']}');
         int setLengthAfter = setofLocations.length;
         if (setLengthAfter == setLengthBefore + 1) {
           listOfMaps.add(jsonDynamicList[i]);
