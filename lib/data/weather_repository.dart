@@ -27,24 +27,16 @@ class WeatherRepository {
     final response = await weatherAPI.fetchCities(loc);
 
     if (response.statusCode == 200) {
-      //print('response.body=${response.body}');
-      // print('response.body type=${response.body.runtimeType}');
-      //var json = jsonDecode(response.body);
       if (jsonDecode(response.body) != null) {
         List<dynamic> jsonList = jsonDecode(response.body);
         if (jsonList.isNotEmpty) {
-          print('jsonList repo = $jsonList');
-          print('json from repository=$json');
-          print('json type from repo= ${json.runtimeType}');
-
-          print('wyswietlam');
-
           final Locations cities =
               Locations.fromJson(jsonDecode(response.body));
-          //return cities;
           return cities;
         }
+        return null;
       }
+      return null;
     } else {
       //throw Exception('Failed to load weather');
       return null;

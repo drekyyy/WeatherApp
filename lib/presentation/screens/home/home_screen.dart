@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:weather_app/logic/bloc/search_bloc.dart';
-
-import 'package:weather_app/logic/cubit/weather_cubit.dart';
-import 'package:weather_app/presentation/screens/home/components/search_result.dart';
-import '../../../logic/cubit/internet_cubit.dart';
+import 'package:weather_app/presentation/screens/home/components/search_suggestions.dart';
 import 'components/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {

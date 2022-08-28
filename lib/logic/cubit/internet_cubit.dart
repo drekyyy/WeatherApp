@@ -1,8 +1,10 @@
 import 'dart:async';
 
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../data/constants/enums.dart';
 
@@ -19,7 +21,9 @@ class InternetCubit extends Cubit<InternetState> {
   void monitorInternetConnection() {
     connectivityStreamSubscription = connectivity.onConnectivityChanged
         .listen((ConnectivityResult connectivityResult) {
-      print('connectivityResult= ${connectivityResult.toString()}');
+      if (kDebugMode) {
+        print('connectivityResult= ${connectivityResult.toString()}');
+      }
       if (connectivityResult == ConnectivityResult.wifi) {
         emitInternetConnected(ConnectionType.wifi);
       } else if (connectivityResult == ConnectivityResult.mobile) {
@@ -30,8 +34,8 @@ class InternetCubit extends Cubit<InternetState> {
     });
   }
 
-  void emitInternetConnected(ConnectionType _connectionType) =>
-      emit(InternetConnected(connectionType: _connectionType));
+  void emitInternetConnected(ConnectionType connectionType) =>
+      emit(InternetConnected(connectionType: connectionType));
   void emitInternetLoading() => emit(InternetLoading());
   void emitInternetDisconnected() => emit(InternetDisconnected());
 

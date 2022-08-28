@@ -1,3 +1,4 @@
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:weather_app/data/locations_model.dart';
@@ -33,9 +34,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   void emitSearchSuggestionsLoaded(Locations locations) =>
+      // ignore: invalid_use_of_visible_for_testing_member
       emit(SearchSuggestionsLoaded(locations));
   //void emitSearchValidation(String message) => emit(SearchValidation(message));
   void emitSearchWithValue(String? searchValue) =>
+      // ignore: invalid_use_of_visible_for_testing_member
       emit(SearchWithValue(searchValue));
+  // ignore: invalid_use_of_visible_for_testing_member
   void emitSearchInitial() => emit(SearchInitial());
 }

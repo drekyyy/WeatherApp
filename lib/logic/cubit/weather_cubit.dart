@@ -1,10 +1,11 @@
 import 'dart:async';
 
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/data/locations_model.dart';
+
 import 'package:weather_app/data/weather_model.dart';
 import 'package:weather_app/data/weather_repository.dart';
 
@@ -12,81 +13,83 @@ part 'weather_state.dart';
 
 class WeatherCubit extends Cubit<WeatherState> {
   WeatherCubit(
-    this.repository,
+    this._repository,
   ) : super(WeatherInitial());
-  final WeatherRepository repository;
-  StreamSubscription? weatherStreamSubscription;
+  final WeatherRepository _repository;
+  StreamSubscription? _weatherStreamSubscription;
 
-  Stream<dynamic>? getStreamOfWeather(String loc, int sec) {
+  Stream<dynamic>? _getStreamOfWeather(String loc, int sec) {
     return Stream.periodic(
       Duration(seconds: sec),
       (int count) {
-        return repository.getWeatherFromLocation(loc);
+        return _repository.getWeatherFromLocation(loc);
       },
     );
   }
 
   void subscribeToWeatherStream(String loc) async {
-    isStreamPaused = false;
-    final _controller = StreamController(
+    _isStreamPaused = false;
+    final controller = StreamController(
+      // ignore: avoid_print
       onCancel: () => print('Cancelled'),
+      // ignore: avoid_print
       onListen: () => print('Listens'),
     );
     //get weather instantly (once), so user isnt stuck in loading screen waiting for the
     //stream data which can take a bit of time
-    getWeather(loc);
+    _getWeather(loc);
 
     //update weather every
     int updateEveryThisManySeconds = 60;
-    _controller.addStream(getStreamOfWeather(loc, updateEveryThisManySeconds)!);
-    weatherStreamSubscription = _controller.stream.listen((event) async {
+    controller.addStream(_getStreamOfWeather(loc, updateEveryThisManySeconds)!);
+    _weatherStreamSubscription = controller.stream.listen((event) async {
       Weather? weather = await Future.value(event);
       if (weather is Weather) {
         emitWeatherLoaded(weather);
       } else {
         //technically this state will never occur because we called getWeather()
         //before which checks for this rule (it emits when the given city doesnt exist)
-        emitWeatherLoadingFailed();
+        emitWeatherValidationFailed('No such city exists!');
       }
     });
   }
 
-  bool? isStreamPaused;
+  bool? _isStreamPaused;
   void pauseWeatherStream() {
-    if (isStreamPaused == false) {
-      weatherStreamSubscription?.pause();
-      isStreamPaused = true;
+    if (_isStreamPaused == false) {
+      _weatherStreamSubscription?.pause();
+      _isStreamPaused = true;
     }
   }
 
   void resumeWeatherStream() async {
     await Future.delayed(const Duration(seconds: 5));
-    if (isStreamPaused == true) {
-      weatherStreamSubscription?.resume();
-      isStreamPaused = false;
+    if (_isStreamPaused == true) {
+      _weatherStreamSubscription?.resume();
+      _isStreamPaused = false;
     }
   }
 
   void unsubscribeWeatherStream() async {
-    if (weatherStreamSubscription != null) {
-      await weatherStreamSubscription!.cancel();
+    if (_weatherStreamSubscription != null) {
+      await _weatherStreamSubscription!.cancel();
       emitWeatherInitial();
     }
   }
 
-  void getWeather(String loc) async {
+  void _getWeather(String loc) async {
     emitWeatherLoading();
-    final Weather? weather = await repository.getWeatherFromLocation(loc);
-    print('weather= $weather');
+    final Weather? weather = await _repository.getWeatherFromLocation(loc);
     if (weather != null) {
       emitWeatherLoaded(weather);
     } else {
-      emitWeatherLoadingFailed();
+      emitWeatherValidationFailed('No such city exists!');
     }
   }
 
   void emitWeatherLoaded(Weather weather) => emit(WeatherLoaded(weather));
   void emitWeatherLoading() => emit(WeatherLoading());
   void emitWeatherInitial() => emit(WeatherInitial());
-  void emitWeatherLoadingFailed() => emit(WeatherLoadingFailed());
+  void emitWeatherValidationFailed(String message) =>
+      emit(WeatherValidationFailed(message));
 }

@@ -18,4 +18,9 @@ class WeatherLoaded extends WeatherState {
   List<Object> get props => [weather!];
 }
 
-class WeatherLoadingFailed extends WeatherState {}
+class WeatherValidationFailed extends WeatherState {
+  String message;
+  WeatherValidationFailed(this.message);
+  @override
+  List<Object> get props => [message];
+}
