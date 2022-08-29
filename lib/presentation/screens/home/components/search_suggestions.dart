@@ -12,9 +12,10 @@ class SearchSuggestions extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(builder: ((context, state) {
       var internetState = context.watch<InternetCubit>().state;
-
+      var weatherState = context.watch<WeatherCubit>().state;
       if (state is SearchSuggestionsLoaded &&
-          internetState is InternetConnected) {
+          internetState is InternetConnected &&
+          weatherState is! WeatherValidationFailed) {
         int length = state.locations!.length;
         return ListView.builder(
             shrinkWrap: true,

@@ -50,27 +50,24 @@ class SearchBar extends StatelessWidget {
                       size: 30,
                     ))),
             onChanged: (String value) async {
-              await Future.delayed(const Duration(milliseconds: 100));
-
-              if (!mounted) {
-                return;
-              } //need to make sure that widget is mounted if we want to use context after async
+              //need to make sure that widget is mounted if we want to use context after async
               var weatherState = context.read<WeatherCubit>().state;
 
               if (weatherState is WeatherValidationFailed) {
                 context.read<WeatherCubit>().emitWeatherInitial();
               }
-              var internetState = context.read<InternetCubit>().state;
-              if (value.isNotEmpty && internetState is InternetConnected) {
+
+              if (value.isNotEmpty &&
+                  context.read<InternetCubit>().state is InternetConnected) {
                 context
                     .read<SearchBloc>()
                     .add(SearchValueUpdated(value.trim()));
               }
+
+              // if search value is empty for 10s, go back to initial state (displays sun gif).
+              // the timer doesnt reset after onchange is called again, so if u typed something and happened to
+              // delete it around 5s, u might instantly go back to sun gif screen
               if (value.isEmpty) {
-                await Future.delayed(const Duration(seconds: 10));
-                if (!mounted) {
-                  return;
-                }
                 context.read<SearchBloc>().add(const SearchValueUpdated(null));
               }
             },

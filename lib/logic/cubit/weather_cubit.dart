@@ -55,10 +55,6 @@ class WeatherCubit extends Cubit<WeatherState> {
       Weather? weather = await Future.value(event);
       if (weather is Weather) {
         emitWeatherLoaded(weather);
-      } else {
-        //technically this state will never occur because we called getWeather()
-        //before which checks for this rule (it emits when the given city doesnt exist)
-        emitWeatherValidationFailed('No such city exists!');
       }
     });
   }
@@ -76,17 +72,13 @@ class WeatherCubit extends Cubit<WeatherState> {
     _getWeatherUsingCoords(lat, lon);
 
     //update weather every
-    int updateEveryThisManySeconds = 60;
+    int updateEveryThisManySeconds = 5;
     controller.addStream(
         _getStreamOfWeatherUsingCoords(lat, lon, updateEveryThisManySeconds)!);
     _weatherStreamSubscription = controller.stream.listen((event) async {
       Weather? weather = await Future.value(event);
       if (weather is Weather) {
         emitWeatherLoaded(weather);
-      } else {
-        //technically this state will never occur because we called getWeather()
-        //before which checks for this rule (it emits when the given city doesnt exist)
-        emitWeatherValidationFailed('No such city exists!');
       }
     });
   }

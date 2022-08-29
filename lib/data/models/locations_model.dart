@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:weather_app/data/repositories/weather_repository.dart';
 
 class Locations {
   List<Map<String, dynamic>>? locations;
@@ -41,7 +40,7 @@ class Locations {
         //set doesnt store the same values, i dont want duplicates that have the same name and state
         //(it sometimes shows the same location but with slightly different coordinates) hance this method is used
         setofLocations.add(
-            '${jsonDynamicList[i]['country']}${jsonDynamicList[i]['state']}');
+            '${jsonDynamicList[i]['country']}${jsonDynamicList[i]['name']}');
         int setLengthAfter = setofLocations.length;
         if (setLengthAfter == setLengthBefore + 1) {
           listOfMaps.add(jsonDynamicList[i]);

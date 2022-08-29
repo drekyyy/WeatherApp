@@ -35,9 +35,11 @@ class WeatherRepository {
 
   Future<bool> checkIfLocationExistsInWeatherDatabase(
       double lat, double lon) async {
-    final response = await weatherAPI.fetchWeatherUsingCoords(lat, lon);
-
+    var response = await weatherAPI.fetchWeatherUsingCoords(lat, lon);
+    print('lat=$lat, lon=$lon');
+    print('jsonDecode(response.body)=${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
+      // response= await weatherAPI.fetchWeatherUsingCityName(city)
       return true;
     } else {
       return false;
@@ -59,6 +61,7 @@ class WeatherRepository {
                 await checkIfLocationExistsInWeatherDatabase(
                     jsonDynamicList[i]['lon'], jsonDynamicList[i]['lat']);
             if (existsInWeatherDatabase == true) {
+              //response = await weatherAPI.fetch
               newJsonList.add(jsonDynamicList[i]);
             }
           }

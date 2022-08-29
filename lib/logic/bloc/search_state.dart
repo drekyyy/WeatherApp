@@ -10,9 +10,9 @@ abstract class SearchState extends Equatable {
 
 class SearchInitial extends SearchState {}
 
-class SearchWithValue extends SearchState {
+class SearchHasValue extends SearchState {
   final String? value;
-  const SearchWithValue(this.value);
+  const SearchHasValue(this.value);
   @override
   List<Object> get props => [value!];
 
