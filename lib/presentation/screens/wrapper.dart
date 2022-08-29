@@ -19,9 +19,6 @@ class _WrapperState extends State<Wrapper> {
   Widget build(BuildContext context) {
     return BlocBuilder<WeatherCubit, WeatherState>(
       builder: (context, state) {
-        if (kDebugMode) {
-          print('state=$state');
-        }
         if (state is WeatherLoading) {
           return const LoadingScreen();
         } else if (state is WeatherLoaded) {

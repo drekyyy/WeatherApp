@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/logic/bloc/search_bloc.dart';
 
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
 import '../../../logic/cubit/internet_cubit.dart';
@@ -106,6 +107,9 @@ class WeatherScreen extends StatelessWidget {
             FloatingActionButton(
                 onPressed: () {
                   context.read<WeatherCubit>().unsubscribeWeatherStream();
+                  context
+                      .read<SearchBloc>()
+                      .add(const SearchValueUpdated(null));
                 },
                 child: const Icon(Icons.keyboard_arrow_left_rounded, size: 40))
           ],

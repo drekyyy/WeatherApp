@@ -12,9 +12,6 @@ class SearchSuggestions extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(builder: ((context, state) {
       var internetState = context.watch<InternetCubit>().state;
-      if (state is SearchWithValue && internetState is InternetConnected) {
-        String? searchValue = state.value;
-      }
 
       if (state is SearchSuggestionsLoaded &&
           internetState is InternetConnected) {
@@ -31,14 +28,19 @@ class SearchSuggestions extends StatelessWidget {
                       'assets/images/country/${state.locations![index]['country'].toString().toLowerCase()}.png',
                       scale: 0.5,
                     )),
-                title: Text(state.locations![index]['name']),
+                title: Text(
+                    '${state.locations![index]['name']}, ${state.locations![index]['country']}'),
                 subtitle: Text(
                   state.locations![index]['state'] ?? '',
                   style: const TextStyle(fontSize: 11),
                   overflow: TextOverflow.ellipsis,
                 ),
                 onTap: () {
-                  context.read<WeatherCubit>().subscribeToWeatherStream('');
+                  context
+                      .read<WeatherCubit>()
+                      .subscribeToWeatherStreamUsingCoords(
+                          state.locations![index]['lat'],
+                          state.locations![index]['lon']);
                 },
               );
             });

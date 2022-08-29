@@ -29,8 +29,10 @@ class SearchBar extends StatelessWidget {
 
                       if (internetState is InternetConnected) {
                         if (textController.text.length > 2) {
-                          context.read<WeatherCubit>().subscribeToWeatherStream(
-                              textController.text.trim());
+                          context
+                              .read<WeatherCubit>()
+                              .subscribeToWeatherStreamUsingCityName(
+                                  textController.text.trim());
                         } else {
                           context
                               .read<WeatherCubit>()
@@ -63,7 +65,12 @@ class SearchBar extends StatelessWidget {
                 context
                     .read<SearchBloc>()
                     .add(SearchValueUpdated(value.trim()));
-              } else {
+              }
+              if (value.isEmpty) {
+                await Future.delayed(const Duration(seconds: 10));
+                if (!mounted) {
+                  return;
+                }
                 context.read<SearchBloc>().add(const SearchValueUpdated(null));
               }
             },

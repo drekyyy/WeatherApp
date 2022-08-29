@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:weather_app/data/repositories/weather_repository.dart';
 
 class Locations {
   List<Map<String, dynamic>>? locations;
@@ -46,6 +47,7 @@ class Locations {
           listOfMaps.add(jsonDynamicList[i]);
         }
       }
+      // }
       return listOfMaps;
     }
 

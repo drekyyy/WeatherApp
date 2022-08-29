@@ -29,13 +29,3 @@ class SearchSuggestionsLoaded extends SearchState {
   @override
   String toString() => 'SearchSuggestionsLoaded(locations: $locations)';
 }
-
-// class SearchValidation extends SearchState {//changet o SearchLoadfailed?
-//   final String message;
-//   const SearchValidation(this.message);
-
-//   @override
-//   List<Object> get props => [message];
-// }
-
-

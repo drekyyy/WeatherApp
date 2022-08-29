@@ -2,15 +2,14 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/data/weather_repository.dart';
-import 'package:weather_app/logic/cubit/weather_cubit.dart';
-import 'package:weather_app/logic/observer/app_bloc_observer.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
+import 'package:weather_app/data/data_providers/weather_data_provider.dart';
+import 'package:weather_app/data/repositories/weather_repository.dart';
+import 'package:weather_app/logic/cubit/weather_cubit.dart';
+import 'package:weather_app/logic/observer/app_bloc_observer.dart';
 import 'package:weather_app/presentation/screens/wrapper.dart';
 import 'package:weather_app/presentation/theme/custom_theme.dart';
-
-import 'data/weather_data_provider.dart';
 import 'logic/bloc/search_bloc.dart';
 import 'logic/cubit/internet_cubit.dart';
 
