@@ -29,10 +29,17 @@ class SearchBar extends StatelessWidget {
 
                       if (internetState is InternetConnected) {
                         if (textController.text.length > 2) {
-                          context
-                              .read<WeatherCubit>()
-                              .subscribeToWeatherStreamUsingCityName(
-                                  textController.text.trim());
+                          if (textController.text
+                              .contains(RegExp('^[a-zA-Z]+'))) {
+                            context.read<SearchBloc>().add(
+                                SearchResultsRequested(
+                                    textController.text.trim()));
+                          } else {
+                            context
+                                .read<WeatherCubit>()
+                                .emitWeatherValidationFailed(
+                                    'Wrong characters used!');
+                          }
                         } else {
                           context
                               .read<WeatherCubit>()
@@ -50,11 +57,6 @@ class SearchBar extends StatelessWidget {
                       size: 30,
                     ))),
             onChanged: (String value) async {
-              await Future.delayed(const Duration(milliseconds: 100));
-
-              if (!mounted) {
-                return;
-              } //need to make sure that widget is mounted if we want to use context after async
               var weatherState = context.read<WeatherCubit>().state;
 
               if (weatherState is WeatherValidationFailed) {
@@ -70,7 +72,7 @@ class SearchBar extends StatelessWidget {
                 await Future.delayed(const Duration(seconds: 10));
                 if (!mounted) {
                   return;
-                }
+                } //need to make sure that widget is mounted if we want to use context after async
                 context.read<SearchBloc>().add(const SearchValueUpdated(null));
               }
             },

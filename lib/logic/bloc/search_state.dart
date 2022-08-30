@@ -21,11 +21,23 @@ class SearchWithValue extends SearchState {
 }
 
 class SearchSuggestionsLoaded extends SearchState {
+  final Weather? weather;
+  const SearchSuggestionsLoaded(this.weather);
+  @override
+  List<Object> get props => [weather!];
+
+  @override
+  String toString() => 'SearchSuggestionsLoaded(weather: $weather)';
+}
+
+class SearchResultsLoaded extends SearchState {
   final Locations? locations;
-  const SearchSuggestionsLoaded(this.locations);
+  const SearchResultsLoaded(this.locations);
   @override
   List<Object> get props => [locations!];
 
   @override
-  String toString() => 'SearchSuggestionsLoaded(locations: $locations)';
+  String toString() => 'SearchResultsLoaded(locations: $locations)';
 }
+
+class SearchLoading extends SearchState {}

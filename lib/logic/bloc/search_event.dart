@@ -17,3 +17,13 @@ class SearchValueUpdated extends SearchEvent {
   @override
   String toString() => 'SearchValueUpdated(value: $value)';
 }
+
+class SearchResultsRequested extends SearchEvent {
+  final String value;
+  const SearchResultsRequested(this.value);
+
+  int get valueLength => value.length;
+
+  @override
+  String toString() => 'SearchResultsRequested(value: $value)';
+}

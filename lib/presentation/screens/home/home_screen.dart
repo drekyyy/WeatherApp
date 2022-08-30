@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:weather_app/logic/bloc/search_bloc.dart';
+import 'package:weather_app/presentation/screens/home/components/search_results.dart';
 import 'package:weather_app/presentation/screens/home/components/search_suggestions.dart';
 import 'components/search_bar.dart';
 
@@ -34,7 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }),
             SearchBar(mounted: mounted),
-            const SearchSuggestions()
+            const SearchSuggestionsScreen(),
+            const SearchResultsScreen()
           ],
         ),
       ),
