@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/logic/bloc/search_bloc.dart';
 
 import 'package:weather_app/logic/cubit/weather_cubit.dart';
+import 'package:weather_app/presentation/screens/loading/loading_screen.dart';
 import '../../../logic/cubit/internet_cubit.dart';
 
 class WeatherScreen extends StatelessWidget {
@@ -19,7 +20,7 @@ class WeatherScreen extends StatelessWidget {
           children: [
             BlocBuilder<WeatherCubit, WeatherState>(
               builder: (context, state) {
-                if (state is WeatherLoaded) {
+                if (state is WeatherLoaded && state.weather != null) {
                   var internetState = context.watch<InternetCubit>().state;
                   if (internetState is InternetDisconnected) {
                     context.read<WeatherCubit>().pauseWeatherStream();
@@ -96,22 +97,31 @@ class WeatherScreen extends StatelessWidget {
                                   ]),
                             ],
                           ),
+                          const SizedBox(height: 50),
+                          FloatingActionButton(
+                              onPressed: () {
+                                context
+                                    .read<WeatherCubit>()
+                                    .unsubscribeWeatherStream();
+
+                                context
+                                    .read<SearchBloc>()
+                                    .add(const SearchValueUpdated(null));
+                                context
+                                    .read<WeatherCubit>()
+                                    .emitWeatherInitial();
+                              },
+                              child: const Icon(
+                                  Icons.keyboard_arrow_left_rounded,
+                                  size: 40))
                         ],
                       ));
+                } else {
+                  context.read<WeatherCubit>().emitWeatherInitial();
+                  return const LoadingScreen(big: false, size: 100);
                 }
-                return const Text(
-                    'some error, WeatherState should always be WeatherLoaded on this screen but it isnt');
               },
             ),
-            const SizedBox(height: 50),
-            FloatingActionButton(
-                onPressed: () {
-                  context.read<WeatherCubit>().unsubscribeWeatherStream();
-                  context
-                      .read<SearchBloc>()
-                      .add(const SearchValueUpdated(null));
-                },
-                child: const Icon(Icons.keyboard_arrow_left_rounded, size: 40))
           ],
         )));
   }

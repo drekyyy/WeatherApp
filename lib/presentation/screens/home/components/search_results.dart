@@ -15,7 +15,7 @@ class SearchResultsScreen extends StatelessWidget {
       var internetState = context.watch<InternetCubit>().state;
 
       if (state is SearchLoading && internetState is InternetConnected) {
-        return const LoadingScreen(big: false);
+        return const LoadingScreen(big: false, size: 40);
       }
       if (state is SearchResultsLoaded && internetState is InternetConnected) {
         if (state.locations == null) {

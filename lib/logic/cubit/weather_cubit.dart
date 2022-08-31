@@ -1,15 +1,17 @@
 import 'dart:async';
 // ignore: depend_on_referenced_packages
-import 'package:bloc/bloc.dart';
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import 'package:weather_app/data/models/weather_model.dart';
 import 'package:weather_app/data/repositories/weather_repository.dart';
 
 part 'weather_state.dart';
 
-class WeatherCubit extends Cubit<WeatherState> {
+class WeatherCubit extends HydratedCubit<WeatherState> {
   WeatherCubit(
     this._repository,
   ) : super(WeatherInitial());
@@ -139,4 +141,14 @@ class WeatherCubit extends Cubit<WeatherState> {
   void emitWeatherInitial() => emit(WeatherInitial());
   void emitWeatherValidationFailed(String message) =>
       emit(WeatherValidationFailed(message));
+
+  @override
+  WeatherState? fromJson(Map<String, dynamic> json) {
+    return WeatherLoaded.fromMap(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(WeatherState state) {
+    return state.toMap();
+  }
 }

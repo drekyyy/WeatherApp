@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:weather_app/data/data_providers/weather_data_provider.dart';
 import 'package:weather_app/data/repositories/weather_repository.dart';
@@ -13,7 +14,8 @@ import 'package:weather_app/presentation/theme/custom_theme.dart';
 import 'logic/bloc/search_bloc.dart';
 import 'logic/cubit/internet_cubit.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
@@ -23,6 +25,8 @@ void main() {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
+  final storage = await HydratedStorage.build(
+      storageDirectory: await getApplicationDocumentsDirectory());
 
   Bloc.observer = AppBlocObserver();
   WeatherDataProvider weatherAPI = WeatherDataProvider();
@@ -32,6 +36,7 @@ void main() {
             weatherRepository: WeatherRepository(weatherAPI),
             connectivity: Connectivity(),
           )),
+      storage: storage,
       blocObserver: AppBlocObserver());
 }
 

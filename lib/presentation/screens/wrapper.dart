@@ -19,7 +19,7 @@ class _WrapperState extends State<Wrapper> {
     return BlocBuilder<WeatherCubit, WeatherState>(
       builder: (context, state) {
         if (state is WeatherLoading) {
-          return const LoadingScreen(big: true);
+          return const LoadingScreen(big: true, size: 100);
         } else if (state is WeatherLoaded) {
           return const WeatherScreen();
         } else {
