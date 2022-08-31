@@ -13,7 +13,7 @@ class WeatherScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Center(child: Text('weather loaded')),
+          title: const Center(child: Text('Weather Loaded')),
         ),
         body: Center(
             child: ListView(
@@ -28,14 +28,40 @@ class WeatherScreen extends StatelessWidget {
                   if (internetState is InternetConnected) {
                     context.read<WeatherCubit>().resumeWeatherStream();
                   }
+
                   return Container(
                       margin: const EdgeInsets.all(10),
                       child: Column(
                         children: [
-                          Text(
-                              'Fetched on ${state.weather!.userDate} your local time.',
-                              style: const TextStyle(
-                                  color: Colors.grey, fontSize: 11)),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SizedBox(width: 12),
+                                Text(
+                                    'Fetched on ${state.weather!.userDate} your local time.',
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 11)),
+                                Transform(
+                                    transform: Matrix4.translationValues(
+                                        -12.0, -1.0, 0.0),
+                                    child: IconButton(
+                                        //restart stream of weather (case for when u close app and reopen)
+                                        onPressed: () async {
+                                          Future.delayed(
+                                              const Duration(seconds: 1));
+
+                                          if (internetState
+                                              is InternetConnected) {
+                                            context
+                                                .read<WeatherCubit>()
+                                                .subscribeToWeatherStreamByCity(
+                                                    state.weather!.city);
+                                          }
+                                        },
+                                        icon: const Icon(
+                                            Icons.restart_alt_rounded,
+                                            size: 13)))
+                              ]),
                           const SizedBox(height: 40),
                           Text(state.weather!.cityDate,
                               style: const TextStyle(

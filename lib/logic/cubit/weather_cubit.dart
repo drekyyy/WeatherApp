@@ -17,8 +17,10 @@ class WeatherCubit extends HydratedCubit<WeatherState> {
   ) : super(WeatherInitial());
   final WeatherRepository _repository;
   StreamSubscription? _weatherStreamSubscription;
+  bool? _isStreamPaused;
+  bool? _isSubscribed;
 
-  Stream<dynamic>? _getStreamOfWeatherUsingCityName(String loc, int sec) {
+  Stream<dynamic>? _getStreamOfWeatherByCity(String loc, int sec) {
     return Stream.periodic(
       Duration(seconds: sec),
       (int count) {
@@ -27,7 +29,7 @@ class WeatherCubit extends HydratedCubit<WeatherState> {
     );
   }
 
-  Stream<dynamic>? _getStreamOfWeatherUsingCoords(
+  Stream<dynamic>? _getStreamOfWeatherByCoords(
       double lat, double lon, int sec) {
     return Stream.periodic(
       Duration(seconds: sec),
@@ -38,62 +40,61 @@ class WeatherCubit extends HydratedCubit<WeatherState> {
   }
 
   void subscribeToWeatherStreamByCity(String loc) async {
-    _isStreamPaused = false;
-    final controller = StreamController(
-      // ignore: avoid_print
-      onCancel: () => print('Cancelled'),
-      // ignore: avoid_print
-      onListen: () => print('Listens'),
-    );
-    //get weather instantly (once), so user isnt stuck in loading screen waiting for the
-    //stream data which can take a bit of time
-    _getWeatherUsingCityName(loc);
-
-    //update weather every
-    int updateEveryThisManySeconds = 60;
-    controller.addStream(
-        _getStreamOfWeatherUsingCityName(loc, updateEveryThisManySeconds)!);
-    _weatherStreamSubscription = controller.stream.listen((event) async {
-      Weather? weather = await Future.value(event);
-      if (weather is Weather) {
-        emitWeatherLoaded(weather);
-      } else {
-        //technically this state will never occur because we called getWeather()
-        //before which checks for this rule (it emits when the given city doesnt exist)
-        emitWeatherValidationFailed('No such city exists!');
-      }
-    });
+    if (_weatherStreamSubscription == null || _isSubscribed == false) {
+      _isStreamPaused = false;
+      final controller = StreamController(
+        // ignore: avoid_print
+        onCancel: () => print('Cancelled'),
+        // ignore: avoid_print
+        onListen: () => print('Listens'),
+      );
+      //get weather instantly (once), so user isnt stuck in loading screen waiting for the
+      //stream data which can take a bit of time
+      _getWeatherByCity(loc);
+      _isSubscribed = true;
+      //update weather every
+      int updateEveryThisManySeconds = 60;
+      controller.addStream(
+          _getStreamOfWeatherByCity(loc, updateEveryThisManySeconds)!);
+      _weatherStreamSubscription = controller.stream.listen((event) async {
+        Weather? weather = await Future.value(event);
+        if (weather is Weather) {
+          emitWeatherLoaded(weather);
+        } else {
+          //technically this state will never occur because we called getWeather()
+          //before which checks for this rule (it emits when the given city doesnt exist)
+          emitWeatherValidationFailed('No such city exists!');
+        }
+      });
+    }
   }
 
   void subscribeToWeatherStreamByCoords(double lat, double lon) async {
-    _isStreamPaused = false;
-    final controller = StreamController(
-      // ignore: avoid_print
-      onCancel: () => print('Cancelled'),
-      // ignore: avoid_print
-      onListen: () => print('Listens'),
-    );
-    //get weather instantly (once), so user isnt stuck in loading screen waiting for the
-    //stream data which can take a bit of time
-    _getWeatherUsingCoords(lat, lon);
-
-    //update weather every
-    int updateEveryThisManySeconds = 60;
-    controller.addStream(
-        _getStreamOfWeatherUsingCoords(lat, lon, updateEveryThisManySeconds)!);
-    _weatherStreamSubscription = controller.stream.listen((event) async {
-      Weather? weather = await Future.value(event);
-      if (weather is Weather) {
-        emitWeatherLoaded(weather);
-      } else {
-        //technically this state will never occur because we called getWeather()
-        //before which checks for this rule (it emits when the given city doesnt exist)
-        emitWeatherValidationFailed('No such city exists!');
-      }
-    });
+    if (_weatherStreamSubscription == null || _isSubscribed == false) {
+      _isStreamPaused = false;
+      final controller = StreamController(
+        // ignore: avoid_print
+        onCancel: () => print('Cancelled'),
+        // ignore: avoid_print
+        onListen: () => print('Listens'),
+      );
+      _getWeatherUsingCoords(lat, lon);
+      _isSubscribed = true;
+      //update weather every
+      int updateEveryThisManySeconds = 60;
+      controller.addStream(
+          _getStreamOfWeatherByCoords(lat, lon, updateEveryThisManySeconds)!);
+      _weatherStreamSubscription = controller.stream.listen((event) async {
+        Weather? weather = await Future.value(event);
+        if (weather is Weather) {
+          emitWeatherLoaded(weather);
+        } else {
+          emitWeatherValidationFailed('No such city exists!');
+        }
+      });
+    }
   }
 
-  bool? _isStreamPaused;
   void pauseWeatherStream() {
     if (_isStreamPaused == false) {
       _weatherStreamSubscription?.pause();
@@ -112,11 +113,12 @@ class WeatherCubit extends HydratedCubit<WeatherState> {
   void unsubscribeWeatherStream() async {
     if (_weatherStreamSubscription != null) {
       await _weatherStreamSubscription!.cancel();
+      _isSubscribed = false;
       emitWeatherInitial();
     }
   }
 
-  void _getWeatherUsingCityName(String loc) async {
+  void _getWeatherByCity(String loc) async {
     emitWeatherLoading();
     final Weather? weather = await _repository.getWeatherByCity(loc);
     if (weather != null) {
