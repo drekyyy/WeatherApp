@@ -27,7 +27,7 @@ class SearchSuggestionsScreen extends StatelessWidget {
           onTap: () {
             context
                 .read<WeatherCubit>()
-                .subscribeToWeatherStreamUsingCityName(state.weather!.city);
+                .subscribeToWeatherStreamByCity(state.weather!.city);
           },
         );
       }

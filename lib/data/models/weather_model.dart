@@ -37,7 +37,6 @@ class Weather {
   });
 
   factory Weather.fromJson(Map<String, dynamic> json) {
-    print('weather json = $json');
     //! this json is nested
     //?instead of creating models for every nest, ive decided to create a function getValue() where
     //?every nested json is a List<dynamic> which u turn into List<String> by first splitting it on ','

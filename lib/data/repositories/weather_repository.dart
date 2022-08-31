@@ -23,7 +23,7 @@ class WeatherRepository {
 
   Future<Weather?> getWeatherByCoords(double lat, double lon) async {
     final response = await weatherAPI.fetchWeatherByCoords(lat, lon);
-    print('lat=$lat, lon=$lon ');
+
     if (response.statusCode == 200) {
       final Weather weather = Weather.fromJson(jsonDecode(response.body));
       return weather;
@@ -32,7 +32,10 @@ class WeatherRepository {
     }
   }
 
-  Future<String> locationExistsInWeatherDatabase(double lat, double lon) async {
+  // geolocation api (fetchCities()) returns different city name from current weather api (fetchWeather())
+  // and we prefer weather api city name, because thats how its gonna be displayed on weather screen
+  // therefore city names shown in results should match those displayed on weather screen
+  Future<String> getActualCityName(double lat, double lon) async {
     final response = await weatherAPI.fetchWeatherByCoords(lat, lon);
 
     if (response.statusCode == 200) {
@@ -44,26 +47,26 @@ class WeatherRepository {
 
   Future<Locations?> getCitiesFromLocation(String loc) async {
     final response = await weatherAPI.fetchCities(loc);
-    print('jsonDecode(response.body)=${jsonDecode(response.body)}');
+
     if (response.statusCode == 200) {
       if (jsonDecode(response.body) != null) {
-        List<dynamic> jsonList = jsonDecode(response.body);
-        var newJsonList = [];
-        if (jsonList.isNotEmpty) {
-          List<String> list = jsonList.toString().split('}, {');
+        List<dynamic> json = jsonDecode(response.body);
+        var newJson = [];
+        if (json.isNotEmpty) {
+          List<String> list = json.toString().split('}, {');
           for (int i = 0; i < list.length; i++) {
-            String actualCityName = await locationExistsInWeatherDatabase(
-                jsonList[i]['lat'], jsonList[i]['lon']);
+            String actualCityName =
+                await getActualCityName(json[i]['lat'], json[i]['lon']);
 
             if (actualCityName.isNotEmpty &&
                 actualCityName.toLowerCase().contains(loc.toLowerCase())) {
-              jsonList[i]['name'] = actualCityName;
-              newJsonList.add(jsonList[i]);
+              json[i]['name'] = actualCityName;
+              newJson.add(json[i]);
             }
           }
 
-          if (newJsonList.isNotEmpty) {
-            final Locations cities = Locations.fromJson(newJsonList);
+          if (newJson.isNotEmpty) {
+            final Locations cities = Locations.fromJson(newJson);
             return cities;
           }
         }

@@ -26,15 +26,16 @@ class Locations {
   String toJson() => json.encode(toMap());
 
   factory Locations.fromJson(var json) {
-    print('locations json=$json');
+    //print('locations json=$json');
     //this var is always List<dynamic>?
 
     //put in json's key, returns nested json value
-    List<Map<String, dynamic>>? getValueFromNestedJson(var jsonDynamicList) {
+    List<Map<String, dynamic>>? getValueFromNestedJson() {
       //each json[i] is a Map<String, dynamic>, so we add them all to the list
 
       // we create this list just to get length of json (how many nexted json there are)
-      List<String> list = jsonDynamicList.toString().split('}, {');
+      List<String> list = json.toString().split('}, {');
+      //print('json tolist= ${json.}')
 
       List<Map<String, dynamic>>? listOfMaps = [];
       Set<String> setofLocations = {};
@@ -42,18 +43,17 @@ class Locations {
         int setLengthBefore = setofLocations.length;
         //set doesnt store the same values, i dont want duplicates that have the same name and state
         //(it sometimes shows the same location but with slightly different coordinates) hance this method is used
-        setofLocations.add(
-            '${jsonDynamicList[i]['country']}${jsonDynamicList[i]['state']}');
+        setofLocations.add('${json[i]['country']}${json[i]['state']}');
         int setLengthAfter = setofLocations.length;
         if (setLengthAfter == setLengthBefore + 1) {
-          listOfMaps.add(jsonDynamicList[i]);
+          listOfMaps.add(json[i]);
         }
       }
       // }
       return listOfMaps;
     }
 
-    return Locations(locations: getValueFromNestedJson(json));
+    return Locations(locations: getValueFromNestedJson());
   }
 
   @override

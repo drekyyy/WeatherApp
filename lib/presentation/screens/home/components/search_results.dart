@@ -13,15 +13,33 @@ class SearchResultsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(builder: ((context, state) {
       var internetState = context.watch<InternetCubit>().state;
+
       if (state is SearchLoading && internetState is InternetConnected) {
         return const LoadingScreen(big: false);
       }
       if (state is SearchResultsLoaded && internetState is InternetConnected) {
         if (state.locations == null) {
-          return Column(children: const [
-            SizedBox(height: 25),
-            Center(child: Text('No results.'))
-          ]);
+          if (state.weather == null) {
+            return Column(children: const [
+              SizedBox(height: 25),
+              Center(child: Text('No results.'))
+            ]);
+          }
+          return ListTile(
+            leading: SizedBox(
+                height: 50,
+                width: 50,
+                child: Image.asset(
+                  'assets/images/country/${state.weather!.country.toString().toLowerCase()}.png',
+                  scale: 0.5,
+                )),
+            title: Text('${state.weather!.city}, ${state.weather!.country}'),
+            onTap: () {
+              context
+                  .read<WeatherCubit>()
+                  .subscribeToWeatherStreamByCity(state.weather!.city);
+            },
+          );
         } else {
           int length = state.locations!.length;
           return ListView.builder(
@@ -46,7 +64,7 @@ class SearchResultsScreen extends StatelessWidget {
                   onTap: () {
                     context
                         .read<WeatherCubit>()
-                        .subscribeToWeatherStreamUsingCoords(
+                        .subscribeToWeatherStreamByCoords(
                             state.locations![index]['lat'],
                             state.locations![index]['lon']);
                   },

@@ -32,12 +32,14 @@ class SearchSuggestionsLoaded extends SearchState {
 
 class SearchResultsLoaded extends SearchState {
   final Locations? locations;
-  const SearchResultsLoaded(this.locations);
+  final Weather? weather;
+  const SearchResultsLoaded(this.locations, this.weather);
   @override
-  List<Object> get props => [locations!];
+  List<Object> get props => [locations!, weather!];
 
   @override
-  String toString() => 'SearchResultsLoaded(locations: $locations)';
+  String toString() =>
+      'SearchResultsLoaded(locations: $locations, weather: $weather)';
 }
 
 class SearchLoading extends SearchState {}

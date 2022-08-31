@@ -32,8 +32,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<SearchResultsRequested>((event, emit) async {
       emitSearchLoading();
       Locations? locations = await Future.value(getCities(event.value));
-
-      emitSearchResultsLoaded(locations);
+      Weather? weather = await Future.value(getLocationSuggestion(event.value));
+      emitSearchResultsLoaded(locations, weather);
     });
   }
   Future<Weather?> getLocationSuggestion(String loc) async {
@@ -52,7 +52,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   void emitSearchWithValue(String? searchValue) =>
       emit(SearchWithValue(searchValue));
   void emitSearchInitial() => emit(SearchInitial());
-  void emitSearchResultsLoaded(Locations? locations) =>
-      emit(SearchResultsLoaded(locations));
+  void emitSearchResultsLoaded(Locations? locations, Weather? weather) =>
+      emit(SearchResultsLoaded(locations, weather));
   void emitSearchLoading() => emit(SearchLoading());
 }

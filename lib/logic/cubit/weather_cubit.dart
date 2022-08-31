@@ -35,7 +35,7 @@ class WeatherCubit extends Cubit<WeatherState> {
     );
   }
 
-  void subscribeToWeatherStreamUsingCityName(String loc) async {
+  void subscribeToWeatherStreamByCity(String loc) async {
     _isStreamPaused = false;
     final controller = StreamController(
       // ignore: avoid_print
@@ -63,7 +63,7 @@ class WeatherCubit extends Cubit<WeatherState> {
     });
   }
 
-  void subscribeToWeatherStreamUsingCoords(double lat, double lon) async {
+  void subscribeToWeatherStreamByCoords(double lat, double lon) async {
     _isStreamPaused = false;
     final controller = StreamController(
       // ignore: avoid_print
