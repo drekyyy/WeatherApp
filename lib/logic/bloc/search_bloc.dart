@@ -13,7 +13,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   SearchBloc(this.repository) : super(SearchInitial()) {
     on<SearchValueUpdated>((event, emit) async {
-      //checking if given seach value isnt empty
+      //checking if given search value isnt empty
       if (event.value != null) {
         emitSearchWithValue(event.value);
         //checking if its longer than 2 and if it only contains alphabetic characters

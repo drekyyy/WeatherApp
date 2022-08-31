@@ -15,6 +15,7 @@ class SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? previousValue;
     TextEditingController textController = TextEditingController();
     return Container(
         margin: const EdgeInsets.only(left: 15, right: 15),
@@ -64,18 +65,25 @@ class SearchBar extends StatelessWidget {
               }
               var internetState = context.read<InternetCubit>().state;
               if (value.isNotEmpty && internetState is InternetConnected) {
-                context
-                    .read<SearchBloc>()
-                    .add(SearchValueUpdated(value.trim()));
+                //making sure we never get suggestions when user is removing textfield input
+                if (value.length <
+                    (previousValue != null ? previousValue!.length : 0)) {
+                  context.read<SearchBloc>().add(const SearchValueUpdated('1'));
+                } else {
+                  context
+                      .read<SearchBloc>()
+                      .add(SearchValueUpdated(value.trim()));
+                }
               }
               if (value.isEmpty) {
-                //await Future.delayed(const Duration(seconds: 2));
+                //await Future.delayed(const Duration(milliseconds: 80));
                 if (!mounted) {
                   return;
                 }
                 //need to make sure that widget is mounted if we want to use context after async
                 context.read<SearchBloc>().add(const SearchValueUpdated(null));
               }
+              previousValue = value;
             },
           ),
           BlocBuilder<WeatherCubit, WeatherState>(

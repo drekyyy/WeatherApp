@@ -15,7 +15,7 @@ class SearchWithValue extends SearchState {
   const SearchWithValue(this.value);
   @override
   List<Object> get props => [value!];
-
+  int? get length => value != null ? value!.length : 0;
   @override
   String toString() => 'SearchWithValue(value: $value)';
 }
