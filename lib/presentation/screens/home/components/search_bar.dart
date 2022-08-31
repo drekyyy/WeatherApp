@@ -69,10 +69,11 @@ class SearchBar extends StatelessWidget {
                     .add(SearchValueUpdated(value.trim()));
               }
               if (value.isEmpty) {
-                await Future.delayed(const Duration(seconds: 10));
+                //await Future.delayed(const Duration(seconds: 2));
                 if (!mounted) {
                   return;
-                } //need to make sure that widget is mounted if we want to use context after async
+                }
+                //need to make sure that widget is mounted if we want to use context after async
                 context.read<SearchBloc>().add(const SearchValueUpdated(null));
               }
             },

@@ -10,8 +10,8 @@ class WeatherRepository {
 
   WeatherRepository(this.weatherAPI);
 
-  Future<Weather?> getWeatherFromLocationUsingCityName(String loc) async {
-    final response = await weatherAPI.fetchWeatherUsingCityName(loc);
+  Future<Weather?> getWeatherByCity(String loc) async {
+    final response = await weatherAPI.fetchWeatherByCity(loc);
 
     if (response.statusCode == 200) {
       final Weather weather = Weather.fromJson(jsonDecode(response.body));
@@ -21,10 +21,9 @@ class WeatherRepository {
     }
   }
 
-  Future<Weather?> getWeatherFromLocationUsingCoords(
-      double lat, double lon) async {
-    final response = await weatherAPI.fetchWeatherUsingCoords(lat, lon);
-
+  Future<Weather?> getWeatherByCoords(double lat, double lon) async {
+    final response = await weatherAPI.fetchWeatherByCoords(lat, lon);
+    print('lat=$lat, lon=$lon ');
     if (response.statusCode == 200) {
       final Weather weather = Weather.fromJson(jsonDecode(response.body));
       return weather;
@@ -33,33 +32,33 @@ class WeatherRepository {
     }
   }
 
-  Future<bool> checkIfLocationExistsInWeatherDatabase(
-      double lat, double lon) async {
-    final response = await weatherAPI.fetchWeatherUsingCoords(lat, lon);
+  Future<String> locationExistsInWeatherDatabase(double lat, double lon) async {
+    final response = await weatherAPI.fetchWeatherByCoords(lat, lon);
 
     if (response.statusCode == 200) {
-      return true;
+      return jsonDecode(response.body)['name'];
     } else {
-      return false;
+      return '';
     }
   }
 
   Future<Locations?> getCitiesFromLocation(String loc) async {
     final response = await weatherAPI.fetchCities(loc);
-
+    print('jsonDecode(response.body)=${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
       if (jsonDecode(response.body) != null) {
         List<dynamic> jsonList = jsonDecode(response.body);
         var newJsonList = [];
         if (jsonList.isNotEmpty) {
-          var jsonDynamicList = jsonDecode(response.body);
-          List<String> list = jsonDynamicList.toString().split('}, {');
+          List<String> list = jsonList.toString().split('}, {');
           for (int i = 0; i < list.length; i++) {
-            bool existsInWeatherDatabase =
-                await checkIfLocationExistsInWeatherDatabase(
-                    jsonDynamicList[i]['lon'], jsonDynamicList[i]['lat']);
-            if (existsInWeatherDatabase == true) {
-              newJsonList.add(jsonDynamicList[i]);
+            String actualCityName = await locationExistsInWeatherDatabase(
+                jsonList[i]['lat'], jsonList[i]['lon']);
+
+            if (actualCityName.isNotEmpty &&
+                actualCityName.toLowerCase().contains(loc.toLowerCase())) {
+              jsonList[i]['name'] = actualCityName;
+              newJsonList.add(jsonList[i]);
             }
           }
 

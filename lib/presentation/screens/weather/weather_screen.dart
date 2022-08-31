@@ -41,12 +41,12 @@ class WeatherScreen extends StatelessWidget {
                                   fontSize: 17,
                                   color: Color.fromRGBO(239, 108, 0, 1))),
                           const SizedBox(height: 5),
-                          Center(
-                              child: Text(
+                          Text(
                             '${state.weather!.city}, ${state.weather!.country}',
+                            textAlign: TextAlign.center,
                             style: const TextStyle(
                                 fontSize: 40, fontWeight: FontWeight.bold),
-                          )),
+                          ),
                           const SizedBox(height: 40),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

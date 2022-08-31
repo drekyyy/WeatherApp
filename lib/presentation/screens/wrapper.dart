@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,7 +19,7 @@ class _WrapperState extends State<Wrapper> {
     return BlocBuilder<WeatherCubit, WeatherState>(
       builder: (context, state) {
         if (state is WeatherLoading) {
-          return LoadingScreen(big: true);
+          return const LoadingScreen(big: true);
         } else if (state is WeatherLoaded) {
           return const WeatherScreen();
         } else {

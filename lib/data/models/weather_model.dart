@@ -37,12 +37,13 @@ class Weather {
   });
 
   factory Weather.fromJson(Map<String, dynamic> json) {
+    print('weather json = $json');
     //! this json is nested
-    //?instead of creating models for every nest, ive decided to create a function where
+    //?instead of creating models for every nest, ive decided to create a function getValue() where
     //?every nested json is a List<dynamic> which u turn into List<String> by first splitting it on ','
     //example nested json of weather: [{id: 802, main: Clouds, description: scattered clouds, icon: 03n}]
     //?then split every List<String> on ':' e.g. {temp: 267} into "{temp" and "267}"
-    //?to get a String containing either key or value (using getValueFromNestedJson function for it)
+    //?to get a String containing either key or value
 
     //example nested json of main: {temp: 289.03, feels_like: 288.71, temp_min: 285.25, temp_max: 291.01, pressure: 1015, humidity: 78}
     //example nested json of wind: {speed: 2.06, deg: 50}
@@ -53,8 +54,10 @@ class Weather {
       return ((value - kelvin) * x).roundToDouble() / x;
     }
 
-    String getValueFromNestedJson(var jsonDynamicList, String wantedKey) {
+    //put in json's key, returns nested json value
+    String getValue(var jsonDynamicList, String wantedKey) {
       List<String> list = jsonDynamicList.toString().split(',');
+
       for (int i = 0; i < list.length; i++) {
         String key = list[i].split(':')[0].trim();
         String value = list[i].split(':')[1].trim();
@@ -98,21 +101,20 @@ class Weather {
       userDate: getUserDate(),
       cityDate: getCityDate(),
       city: json['name'],
-      country: getValueFromNestedJson(json['sys'], 'country'),
-      weather: getValueFromNestedJson(json['weather'], 'description'),
-      icon: getValueFromNestedJson(json['weather'], 'icon'),
-      temperature: roundToXth(
-          double.parse(getValueFromNestedJson(json['main'], 'temp')), 10),
-      temperatureMin: roundToXth(
-          double.parse(getValueFromNestedJson(json['main'], 'temp_min')), 10),
-      temperatureMax: roundToXth(
-          double.parse(getValueFromNestedJson(json['main'], 'temp_max')), 10),
-      temperatureFeelsLike: roundToXth(
-          double.parse(getValueFromNestedJson(json['main'], 'feels_like')), 10),
+      country: getValue(json['sys'], 'country'),
+      weather: getValue(json['weather'], 'description'),
+      icon: getValue(json['weather'], 'icon'),
+      temperature: roundToXth(double.parse(getValue(json['main'], 'temp')), 10),
+      temperatureMin:
+          roundToXth(double.parse(getValue(json['main'], 'temp_min')), 10),
+      temperatureMax:
+          roundToXth(double.parse(getValue(json['main'], 'temp_max')), 10),
+      temperatureFeelsLike:
+          roundToXth(double.parse(getValue(json['main'], 'feels_like')), 10),
       visibility: double.parse(getVisibility()),
-      pressure: int.parse(getValueFromNestedJson(json['main'], 'pressure')),
-      windSpeed: double.parse(getValueFromNestedJson(json['wind'], 'speed')),
-      humidity: int.parse(getValueFromNestedJson(json['main'], 'humidity')),
+      pressure: int.parse(getValue(json['main'], 'pressure')),
+      windSpeed: double.parse(getValue(json['wind'], 'speed')),
+      humidity: int.parse(getValue(json['main'], 'humidity')),
     );
   }
 

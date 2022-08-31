@@ -20,7 +20,7 @@ class WeatherCubit extends Cubit<WeatherState> {
     return Stream.periodic(
       Duration(seconds: sec),
       (int count) {
-        return _repository.getWeatherFromLocationUsingCityName(loc);
+        return _repository.getWeatherByCity(loc);
       },
     );
   }
@@ -30,7 +30,7 @@ class WeatherCubit extends Cubit<WeatherState> {
     return Stream.periodic(
       Duration(seconds: sec),
       (int count) {
-        return _repository.getWeatherFromLocationUsingCoords(lat, lon);
+        return _repository.getWeatherByCoords(lat, lon);
       },
     );
   }
@@ -116,8 +116,7 @@ class WeatherCubit extends Cubit<WeatherState> {
 
   void _getWeatherUsingCityName(String loc) async {
     emitWeatherLoading();
-    final Weather? weather =
-        await _repository.getWeatherFromLocationUsingCityName(loc);
+    final Weather? weather = await _repository.getWeatherByCity(loc);
     if (weather != null) {
       emitWeatherLoaded(weather);
     } else {
@@ -127,8 +126,7 @@ class WeatherCubit extends Cubit<WeatherState> {
 
   void _getWeatherUsingCoords(double lat, double lon) async {
     emitWeatherLoading();
-    final Weather? weather =
-        await _repository.getWeatherFromLocationUsingCoords(lat, lon);
+    final Weather? weather = await _repository.getWeatherByCoords(lat, lon);
     if (weather != null) {
       emitWeatherLoaded(weather);
     } else {

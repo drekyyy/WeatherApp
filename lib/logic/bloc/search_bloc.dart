@@ -37,8 +37,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     });
   }
   Future<Weather?> getLocationSuggestion(String loc) async {
-    final Weather? weather =
-        await repository.getWeatherFromLocationUsingCityName(loc);
+    final Weather? weather = await repository.getWeatherByCity(loc);
     return weather;
   }
 

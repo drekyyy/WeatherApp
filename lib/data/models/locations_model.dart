@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:weather_app/data/repositories/weather_repository.dart';
 
 class Locations {
   List<Map<String, dynamic>>? locations;
@@ -27,7 +26,10 @@ class Locations {
   String toJson() => json.encode(toMap());
 
   factory Locations.fromJson(var json) {
+    print('locations json=$json');
     //this var is always List<dynamic>?
+
+    //put in json's key, returns nested json value
     List<Map<String, dynamic>>? getValueFromNestedJson(var jsonDynamicList) {
       //each json[i] is a Map<String, dynamic>, so we add them all to the list
 
