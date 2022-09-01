@@ -45,7 +45,7 @@ class WeatherScreen extends StatelessWidget {
                                     transform: Matrix4.translationValues(
                                         -12.0, -1.0, 0.0),
                                     child: IconButton(
-                                        //restart stream of weather (case for when u close app and reopen)
+                                        //restart stream of weather (case when u close the app and reopen)
                                         onPressed: () async {
                                           Future.delayed(
                                               const Duration(seconds: 1));
